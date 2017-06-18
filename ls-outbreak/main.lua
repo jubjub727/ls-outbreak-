@@ -23,21 +23,19 @@ local WeaponTypes = {"weapon_bat", "weapon_pistol50", "weapon_combatpdw", "weapo
 
 AddClientScript("playerMain.lua")
 
-local sha2 = dofile("sha2.lua")
+--local sha2 = dofile("sha2.lua")
 
 local conn
 
 local Players = {}
 
-Player:On("connect", function(ply) -- When a player connects add them to our table
-    local username, password
-    -- Get User Input Here
-    if (Login(ply, username, password)) then
+Player:On("login:login", function(ply, username, password) 
+	if (Login(ply, username, password)) then
         ply:setPosition(0,0,0)
     else
         ply:kick()
     end
-end )
+end)
 
 Player:On("disconnect", function(ply) -- When a player disconnects go through our table and find them and remove them from our table
     for k,v in pairs(Players) do
@@ -56,11 +54,15 @@ local function loadMySQL()
     print("Done Initialising MySQL")
 end
 
-local function Login(ply, username, password)
-    local passHash = sha2.hash256(password)
-
-    local result = conn.query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, passHash)
-    if #result < 1 then
+function Login(ply, username, password)
+    --local passHash = sha2.hash256(password)
+	print("Starting login")
+	print(ply)
+	print(username)
+	print(password)
+    local result = conn.query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
+    print(result);
+	if #result < 1 then
         return 0
     else
         table.insert(Players, {result.uid, ply})

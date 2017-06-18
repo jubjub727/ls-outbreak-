@@ -1,1 +1,8 @@
 type: lua
+files:
+  - html/index.html
+  - html/app.js
+  - html/jquery.js
+  - html/style.css
+  - html/jquery-ui.min.css
+  - html/jquery-ui.min.js
