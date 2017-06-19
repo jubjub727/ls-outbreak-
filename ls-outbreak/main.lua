@@ -32,6 +32,7 @@ local Players = {}
 Player:On("login:login", function(ply, username, password) 
 	if (Login(ply, username, password)) then
         ply:setPosition(0,0,0)
+		Player:TriggerClient("closemenus")
     else
         ply:kick()
     end
@@ -50,18 +51,14 @@ local function loadMySQL()
     conn = MySQL:Connect("27.100.36.9", "outbreak", "orangetest", "fucknativeui")
 
     -- Initial Setup if no tables exist
-    conn.query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL, username varchar(256) NOT NULL, password varchar(64));")
+    conn:query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL, username varchar(256) NOT NULL, password varchar(64));")
     print("Done Initialising MySQL")
 end
 
 function Login(ply, username, password)
     --local passHash = sha2.hash256(password)
 	print("Starting login")
-	print(ply)
-	print(username)
-	print(password)
-    local result = conn.query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
-    print(result);
+    local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
 	if #result < 1 then
         return 0
     else

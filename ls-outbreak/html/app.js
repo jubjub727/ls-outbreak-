@@ -1,3 +1,5 @@
+var main_theme = undefined;
+
 $(function() {
 	$("#login_menu").show("bounce", 850);
 	
@@ -9,7 +11,7 @@ $(function() {
 		inputs[i].oninput = onInputChange
 		 if (inputs[i].type == "submit") {inputs[i].disabled = true;}
 	}
-	var main_theme = new Audio("sounds/main.ogg");
+	main_theme = new Audio("sounds/main.ogg");
 	
 	main_theme.volume = 0.06;
 	main_theme.loop = true;
@@ -53,4 +55,13 @@ function showRegisterMenu() {
 function showLoginMenu() {
 	$("#register_menu").hide();
 	$("#login_menu").show("fold", 500);
+}
+
+function closeMenus() {
+	$("#login_menu").hide();
+	$("#register_menu").hide();
+}
+function stopMusic() {
+	main_theme.pause();
+	main_theme = undefined;
 }
