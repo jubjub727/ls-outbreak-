@@ -1,4 +1,4 @@
-local browser = UI:Browser("http://orange/resources/login/html/index.html")
+local browser = UI:Browser("http://orange/resources/ls-outbreak/html/index.html")
 menu_loaded = false
 local loggingIn = true
 
