@@ -38,6 +38,15 @@ Player:On("login:login", function(ply, username, password)
     end
 end)
 
+Player:On("login:register", function(ply, username, password, email) 
+	if (Register(ply, username, password, email)) then
+        ply:setPosition(0,0,0)
+		Player:TriggerClient("closemenus")
+    else
+        ply:kick()
+    end
+end)
+
 Player:On("disconnect", function(ply) -- When a player disconnects go through our table and find them and remove them from our table
     for k,v in pairs(Players) do
         if ply:getID() == v[2]:getID() then
