@@ -30,9 +30,81 @@ local conn
 
 local Players = {}
 
+local function getUID(ply)
+    for k,v in pairs(Players) do
+        if v[2]:getID() == ply:getID() then
+            return v[1]
+        end
+    end
+    return -1
+end
+
+local function getLastPos(ply)
+    local uid = getUID(ply)
+
+    local result = conn:query("SELECT lastX, lastY, lastZ FROM positionData WHERE uid = %s;", uid)
+
+    if not (result[1] == nil) then
+        return result[1].lastX, result[1].lastY, result[1].lastZ
+    else
+        conn:noQuery("INSERT INTO positionData (uid, lastX, lastY, lastZ) VALUES (%s, 0, 0, 0);", uid)
+        ply:giveWeapon(-72657034, 1)
+
+        math.randomseed(os.time())
+
+        local x = math.random(-1000, 1000)
+        local y = math.random(-1000, 1000)
+        local z = 400
+
+        return x,y,z
+    end
+end
+
+local function spawnPlayer(ply)
+    local x,y,z = getLastPos(ply)
+    ply:setPosition(x,y,z)
+end
+
+local function loadMySQL()
+    print("Initialising MySQL")
+    conn = MySQL:Connect("27.100.36.9", "outbreak", "orangetest", "fucknativeui")
+
+    -- Initial Setup if no tables exist
+    conn:query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL AUTO_INCREMENT, username varchar(256) NOT NULL, password varchar(64) NOT NULL, email varchar(128), PRIMARY KEY (uid) );")
+    conn:query("CREATE TABLE IF NOT EXISTS positionData( uid int NOT NULL, lastX float, lastY float, lastZ float );")
+    print("Done Initialising MySQL")
+end
+
+local function Register(ply, username, password, email)
+    local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s';", username)
+
+    if not (result[1] == nil) then
+        return false
+    else
+        conn:noQuery("INSERT INTO users (username, password, email) VALUES ('%s','%s','%s');", username, password, email)
+        local res = conn:query("SELECT uid FROM users WHERE username = '%s';", username)
+        table.insert(Players, {res[1].uid, ply})
+        return true
+    end
+end
+
+local function Login(ply, username, password)
+    --local passHash = sha2.hash256(password)
+	print("User "..username.." Logging In")
+    local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
+
+	if not (result[1] == nil) then
+        table.insert(Players, {result[1].uid, ply})
+        return true
+    else
+        print("User "..username.." Wrong Password")
+        return false
+    end
+end
+
 Player:On("login:login", function(ply, username, password) 
 	if (Login(ply, username, password)) then
-        ply:setPosition(0,0,0)
+        spawnPlayer(ply)
 		Player:TriggerClient("closemenus")
     else
         ply:kick()
@@ -41,7 +113,7 @@ end)
 
 Player:On("login:register", function(ply, username, password, email) 
 	if (Register(ply, username, password, email)) then
-        ply:setPosition(0,0,0)
+        spawnPlayer(ply)
 		Player:TriggerClient("closemenus")
     else
         ply:kick()
@@ -51,45 +123,12 @@ end)
 Player:On("disconnect", function(ply) -- When a player disconnects go through our table and find them and remove them from our table
     for k,v in pairs(Players) do
         if ply:getID() == v[2]:getID() then
+            local x,y,z = ply:getPosition()
+            conn:noQuery("UPDATE positionData SET lastX = %s, lastY = %s, lastZ = %s WHERE uid=%s;", x, y, z, v[1])
             table.remove(Players, k)
         end
     end
 end )
-
-local function loadMySQL()
-    print("Initialising MySQL")
-    conn = MySQL:Connect("27.100.36.9", "outbreak", "orangetest", "fucknativeui")
-
-    -- Initial Setup if no tables exist
-    conn:query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL, username varchar(256) NOT NULL, password varchar(64), email varchar(128));")
-    print("Done Initialising MySQL")
-end
-
-function Register(ply, username, password, email)
-    local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s';", username)
-
-    if not (result[1] == nil) then
-        return false
-    else
-        conn:noQuery("INSERT INTO users (username, password, email) VALUES ('%s','%s','%s');", username, password, email)
-        table.insert(Players, {result.uid, ply})
-        return true
-    end
-end
-
-function Login(ply, username, password)
-    --local passHash = sha2.hash256(password)
-	print("User "..username.." Logging In")
-    local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
-
-	if not (result[1] == nil) then
-        table.insert(Players, {result.uid, ply})
-        return true
-    else
-        print("User "..username.." Wrong Password")
-        return false
-    end
-end
 
 local function Setup() -- Called before anything for things that need to be setPosition
     
