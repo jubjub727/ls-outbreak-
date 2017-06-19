@@ -41,7 +41,7 @@ function onLoginFormSubmit(event) {
 
 function onRegisterFormSubmit(event) {
 	event.preventDefault();
-	TriggerEvent("register", event.target[1], event.target[2], event.target[0]);
+	TriggerEvent("register", event.target[1].value, event.target[2].value, event.target[0].value);
 }
 
 function onLoginInputChange(elem) {
