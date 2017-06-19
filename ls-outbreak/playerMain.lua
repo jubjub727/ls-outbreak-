@@ -18,7 +18,7 @@ end)
 browser:on("register", function(username, password, email)
 	local pass = sha(password)
 	
-	Server:Trigger("login:register", username, pass)
+	Server:Trigger("login:register", username, pass, email)
 end)
 
 Server:On("closemenus", function()
