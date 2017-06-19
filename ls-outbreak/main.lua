@@ -67,7 +67,7 @@ end
 function Register(ply, username, password, email)
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s';", username)
 
-    if (result[1] == nil) then
+    if not (result[1] == nil) then
         return false
     else
         conn:noQuery("INSERT INTO users (username, password, email) VALUES ('%s','%s','%s');", username, password, email)
