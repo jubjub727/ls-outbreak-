@@ -47,26 +47,22 @@ function onRegisterFormSubmit(event) {
 function onLoginInputChange(elem) {
 	login_inputs = $("#login_form input");
 	for (i=0; i < login_inputs.length; i++) {
-		console.log(login_inputs[i].type)
 		if (login_inputs[i].value == "") {
 			login_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = true;
 			return
 		}
 		login_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = false;
-		console.log(login_inputs[i].parentElement.parentElement)
 	}
 }
 
 function onRegisterInputChange(elem) {
 	register_inputs = $("#register_form input");
 	for (i=0; i < register_inputs.length; i++) {
-		console.log(register_inputs[i].type)
 		if (register_inputs[i].value == "") {
 			register_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = true;
 			return
 		}
 		register_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = false;
-		console.log(register_inputs[i].parentElement.parentElement)
 	}
 }
 
