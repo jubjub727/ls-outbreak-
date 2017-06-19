@@ -6,11 +6,17 @@ $(function() {
 	$("#login_form").submit(function(event) {onLoginFormSubmit(event)});
 	$("#register_form").submit(function(event) {onRegisterFormSubmit(event)});
 	
-	inputs = document.getElementsByTagName("input");
-	for (i=0; i < inputs.length; i++) {
-		inputs[i].oninput = onInputChange
-		 if (inputs[i].type == "submit") {inputs[i].disabled = true;}
+	login_inputs = document.getElementById("login_form").getElementsByTagName("input");
+	register_inputs = document.getElementById("register_form").getElementsByTagName("input");
+	for (i=0; i < login_inputs.length; i++) {
+		login_inputs[i].oninput = onLoginInputChange
+		 if (login_inputs[i].type == "submit") {login_inputs[i].disabled = true;}
 	}
+	for (i=0; i < register_inputs.length; i++) {
+		register_inputs[i].oninput = onRegisterInputChange
+		 if (register_inputs[i].type == "submit") {register_inputs[i].disabled = true;}
+	}
+	
 	main_theme = new Audio("sounds/main.ogg");
 	
 	main_theme.volume = 0.06;
@@ -38,14 +44,29 @@ function onRegisterFormSubmit(event) {
 	TriggerEvent("register", event.target[1], event.target[2], event.target[0]);
 }
 
-function onInputChange(elem) {
-	inputs = $("input[type=password], input[type=text]");
-	for (i=0; i < inputs.length; i++) {
-		if (inputs[i].value == "") {
-			inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = true;
+function onLoginInputChange(elem) {
+	login_inputs = $("#login_form input");
+	for (i=0; i < login_inputs.length; i++) {
+		console.log(login_inputs[i].type)
+		if (login_inputs[i].value == "") {
+			login_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = true;
 			return
 		}
-		inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = false;
+		login_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = false;
+		console.log(login_inputs[i].parentElement.parentElement)
+	}
+}
+
+function onRegisterInputChange(elem) {
+	register_inputs = $("#register_form input");
+	for (i=0; i < register_inputs.length; i++) {
+		console.log(register_inputs[i].type)
+		if (register_inputs[i].value == "") {
+			register_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = true;
+			return
+		}
+		register_inputs[i].parentElement.parentElement.lastElementChild.firstChild.disabled = false;
+		console.log(register_inputs[i].parentElement.parentElement)
 	}
 }
 
