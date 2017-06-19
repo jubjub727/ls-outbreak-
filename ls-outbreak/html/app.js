@@ -35,6 +35,7 @@ function onLoginFormSubmit(event) {
 
 function onRegisterFormSubmit(event) {
 	event.preventDefault();
+	TriggerEvent("register", event.target[1], event.target[2], event.target[0]);
 }
 
 function onInputChange(elem) {
