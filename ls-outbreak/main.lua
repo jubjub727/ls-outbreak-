@@ -57,7 +57,7 @@ end
 
 function Login(ply, username, password)
     --local passHash = sha2.hash256(password)
-	print("Starting login")
+	print("User "..username.." Logging In")
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
 	if #result < 1 then
         return 0
