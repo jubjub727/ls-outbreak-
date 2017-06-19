@@ -21,6 +21,7 @@ local WeaponTypes = {"weapon_bat", "weapon_pistol50", "weapon_combatpdw", "weapo
 
 -- Actual Code
 
+AddClientScript("sha1.lua")
 AddClientScript("playerMain.lua")
 
 --local sha2 = dofile("sha2.lua")
