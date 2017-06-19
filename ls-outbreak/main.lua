@@ -72,6 +72,7 @@ function Register(ply, username, password, email)
         return false
     else
         conn:noQuery("INSERT INTO users (username, password, email) VALUES ('%s','%s','%s');", username, password, email)
+        table.insert(Players, {result.uid, ply})
         return true
     end
 end
