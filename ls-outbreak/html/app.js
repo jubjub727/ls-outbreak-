@@ -9,7 +9,21 @@ $(function() {
 		inputs[i].oninput = onInputChange
 		 if (inputs[i].type == "submit") {inputs[i].disabled = true;}
 	}
+	var main_theme = new Audio("sounds/main.ogg");
 	
+	main_theme.volume = 0.06;
+	main_theme.loop = true;
+	main_theme.play();
+	
+	$(".speaker").click(function() {
+		$(".speaker").toggle();
+		if (main_theme.paused) {
+			main_theme.play();
+		}
+		else {
+			main_theme.pause();
+		}
+	});
 });
 
 function onLoginFormSubmit(event) {
