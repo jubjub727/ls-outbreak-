@@ -50,7 +50,7 @@ local function loadMySQL()
     conn = MySQL:Connect("27.100.36.9", "outbreak", "orangetest", "fucknativeui")
 
     -- Initial Setup if no tables exist
-    conn.query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL, username varchar(256) NOT NULL, password varchar(64));")
+    conn:query("CREATE TABLE IF NOT EXISTS users( uid int NOT NULL, username varchar(256) NOT NULL, password varchar(64));")
     print("Done Initialising MySQL")
 end
 
