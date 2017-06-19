@@ -1,0 +1,88 @@
+html, body {
+   height: 100%;
+	-webkit-user-select: none; /* Chrome/Safari */   
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.menu {
+	width: 420px;
+	background-color: rgba(0, 0, 0, 0.7);
+	border-color:black;
+	border-style:solid;
+	border-radius:2px;
+	border-width:2px;
+	color:rgb(111,156,50);
+	font-family: 'Segoe UI', 'Segoe UI Symbol', Arial, sans-serif;
+}
+
+.menu-header {
+	font-size: 150%;
+	text-align: center;
+	margin-top: 10px;
+}
+.main_login {
+	font-size: 120%;
+}
+input {
+	width:100%;
+}
+
+form {
+	margin: 0 auto;
+	width:250px;
+}
+
+input[type=text], input[type=password] {
+	border: none;
+	border-bottom: gray 1px solid;
+	background-color: none;
+	background-color: rgba(0, 0, 0, 0.0);
+	font-size: 14px;
+	margin-top: 10px;
+	height: 30px;
+	color:white;
+}
+input[type=text], input[type=password]:focus {
+	border: none;
+	border-bottom: gray 1px solid;
+}
+
+input[type=submit] {
+	height:35px;
+	background-color: rgb(255,255,255);
+	border: none;
+	border-radius:3px;
+	margin-top:15px;
+	cursor:pointer;
+}
+input[type=submit]:hover {
+  background-color:whitesmoke;
+}
+
+.menu_footer a {
+	color: gray;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.menu_footer a:hover {
+color: #FFFFFF;
+}
+
+.menu_footer {
+	text-align: center;
+	display:flex;
+	justify-content: space-between;
+	margin-left:80px;
+	margin-right:80px;
+	margin-top:5px;
+}

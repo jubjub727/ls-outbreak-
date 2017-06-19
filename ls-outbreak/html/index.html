@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>Login System By Vaffanculo</title>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="jquery-ui.min.css" />
+		
+		<script src="jquery.js"></script>
+		<script src="jquery-ui.min.js"></script>
+		<script src="app.js"></script>
+	</head>
+
+	<body>
+		<div id="login_menu" class="menu" style="display:none;">
+			<div class="menu-header">Login Page</div>
+			<div class="main_login">
+				<form id="login_form">
+					<div id="user_login"><input placeholder="Username" type="text"></input></div>
+					<div id="pass_login"><input placeholder="Password" type="password"></input></div>
+					<div id="submit_login"><input type="submit" value="Sign in"></input></div>
+				</form>
+			<div class="menu_footer"><a onclick="showRegisterMenu()">Create an account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+			</div>
+		</div>
+		
+		<div id="register_menu" class="menu" style="display:none;">
+			<div class="menu-header">Register Page</div>
+			<div class="main_register">
+				<form id="register_form">
+					<div id="email_register"><input placeholder="Email Address" type="text"></input></div>
+					<div id="user_register"><input placeholder="Username" type="text"></input></div>
+					<div id="pass_register"><input placeholder="Password" type="password"></input></div>
+					<div id="submit_register"><input type="submit" value="Register"></input></div>
+				</form>
+			<div class="menu_footer"><a onclick="showLoginMenu()">Sign in to your account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+			</div>
+		</div>
+	</body>
+
+</html>
