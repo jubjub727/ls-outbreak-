@@ -55,6 +55,9 @@ local function loadMySQL()
     print("Done Initialising MySQL")
 end
 
+function Register(ply, username, password, email)
+end
+
 function Login(ply, username, password)
     --local passHash = sha2.hash256(password)
 	print("User "..username.." Logging In")
