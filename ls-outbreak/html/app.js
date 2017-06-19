@@ -1,6 +1,12 @@
+  /*-------------------------------- */
+ /* LOGIN SYSTEM BY: VAFFANCULO and JUBJUB */
+/*-------------------------------- */
+
 var main_theme = undefined;
 
+
 $(function() {
+	/* LOGIN BELOW*/
 	$("#login_menu").show("bounce", 850);
 	
 	$("#login_form").submit(function(event) {onLoginFormSubmit(event)});
@@ -32,6 +38,23 @@ $(function() {
 			main_theme.pause();
 		}
 	});
+	
+	/* INVENTORY BELOW*/
+	$("#inventory_menu").draggable({handle: ".top_border"});
+	
+	for (i = 0; i < 12; i++) { 
+		$("#firstgrid").append("<div class='menu_slot nearby_slot' ></div>");
+	}
+	
+	for (i = 0; i < 24; i++) { 
+		$("#secondgrid").append("<div class='menu_slot inventory_slot' ></div>");
+	}
+	
+	$(".menu_slot").droppable({
+		accept: ".item_img", 
+		hoverClass: "drop_hover", 
+		drop: handleDrop
+		});
 });
 
 function onLoginFormSubmit(event) {
@@ -83,3 +106,145 @@ function stopMusic() {
 	main_theme.pause();
 	main_theme = undefined;
 }
+
+  /*-------------------------------- */
+ /* INVENTORY SYSTEM BY: VAFFANCULO */
+/*-------------------------------- */
+
+
+var ctrlPressed;
+
+document.onkeydown = function(e) {
+	if (e.keyCode === 17) {
+        ctrlPressed = true;
+    }
+	
+}
+document.onkeyup = function(e) {
+	if (e.keyCode === 17) {
+        ctrlPressed = false;
+    }
+	
+}
+
+function handleDrop(event, ui) {
+	if (ctrlPressed != true) {
+		if (event.target.children.length != 0) {
+			if (event.target.firstChild.itemname == ui.draggable[0].parentElement.itemname || event.target.firstChild.plusdata == ui.draggable[0].parentElement.plusdata) {
+				ui.draggable[0].parentElement.itemcount = ui.draggable[0].parentElement.itemcount + event.target.firstChild.itemcount;
+				ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
+			}
+			else {
+				$(ui.draggable[0].from).append(event.target.firstChild);
+			}
+			event.target.innerHTML = "";
+		}
+		$(event.target).append(ui.draggable[0].parentElement);
+			
+		$("body").remove("ui-helper-hidden-accessible");
+		$(".menu_slot").tooltip();
+	}
+	else {
+		if (event.target.children.length != 0) {
+			if (event.target.firstChild.itemname == ui.draggable[0].parentElement.itemname || event.target.firstChild.plusdata == ui.draggable[0].parentElement.plusdata) {
+				ui.draggable[0].parentElement.itemcount = Math.floor(ui.draggable[0].parentElement.itemcount / 2) + event.target.firstChild.itemcount;
+				ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
+			}
+			else {
+				$(ui.draggable[0].from).append(event.target.firstChild);
+			}
+		}
+		else {
+			ui.draggable[0].parentElement.itemcount = Math.floor(ui.draggable[0].parentElement.itemcount / 2)
+			ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
+			$(event.target).append($(ui.draggable[0].parentElement).clone());
+			event.target.firstChild.firstChild.style.top = ""
+			event.target.firstChild.firstChild.style.left = ""
+			event.target.firstChild.firstChild.title = ui.draggable[0].title
+			event.target.firstChild.itemcount = ui.draggable[0].parentElement.itemcount
+			console.log(event.target.firstChild)
+			$(event.target.firstChild.firstChild).draggable( {
+				revert:"invalid",
+				stop: function(event, ui) {event.target.style = "";},
+				start: function(event, ui) {this.from = this.parentElement.parentElement;}
+			});
+			
+			
+			
+			
+		}
+		$("body").remove("ui-helper-hidden-accessible");
+		$(".menu_slot").tooltip();
+	}
+	
+};
+
+function getEmptySlots() {
+	return $(".menu_slot:not(:has(*))");
+};
+
+function openInv() {
+	$("#inventory_menu").show();
+};
+
+
+function closeInv() {
+	$("#inventory_menu").hide();
+};
+
+function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
+	if (slot > 24 || slot < 0) {
+		return
+	}
+	
+	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='http://orange/server/resources/ls-outbreak/html/img/car_key.png' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x");
+	$($(".inventory_slot")[slot]).tooltip();
+	$(".inventory_slot")[slot].children[0].data = plusdata;
+	$(".inventory_slot")[slot].children[0].itemcount = itemcount;
+	$(".inventory_slot")[slot].children[0].itemname = itemname;
+	$(".item_img").draggable( {
+	revert:"invalid",
+	stop: function(event, ui) {event.target.style = "";},
+	start: function(event, ui) {this.from = this.parentElement.parentElement;}
+	});
+};
+
+function addItemNearby(slot, helper_text, itemname, itemcount, plusdata) {
+	if (slot > 12 || slot < 0) {
+		return
+	}
+	
+	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='http://orange/server/resources/ls-outbreak/html/img/car_key.png' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x");
+	$($(".nearby_slot")[slot]).tooltip();
+	$(".nearby_slot")[slot].children[0].data = plusdata;
+	$(".nearby_slot")[slot].children[0].itemcount = itemcount;
+	$(".nearby_slot")[slot].children[0].itemname = itemname;
+	$(".item_img").draggable( {
+	revert:"invalid",
+	stop: function(event, ui) {event.target.style = "";},
+	start: function(event, ui) {this.from = this.parentElement.parentElement;}
+	});
+};
+
+
+function close_inv_pressed() {
+	TriggerEvent('inventory:close_inv');
+};
+
+function getFirstEmptyInventorySlotIndex() {
+	slots = document.getElementsByClassName("inventory_slot");
+	for (i = 0; i < slots.length; i++) {
+		if (slots[i].firstChild == undefined) {
+			return i
+		}
+	}
+};
+
+function getFirstEmptyNearbySlotIndex() {
+	slots = document.getElementsByClassName("nearby_slot");
+	for (i = 0; i < slots.length; i++) {
+		if (slots[i].firstChild == undefined) {
+			return i
+		}
+	}
+};

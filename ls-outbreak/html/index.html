@@ -13,28 +13,46 @@
 	</head>
 
 	<body>
-		<div id="login_menu" class="menu" style="display:none;">
-			<div class="menu-header">Login Page <span class="speaker">&#128266;</span><span style="display:none;" class="speaker">&#128263;</span></div>
-			<div class="main_login">
-				<form id="login_form">
-					<div id="user_login"><input placeholder="Username" type="text"></input></div>
-					<div id="pass_login"><input placeholder="Password" type="password"></input></div>
-					<div id="submit_login"><input type="submit" value="Sign in"></input></div>
-				</form>
-			<div class="menu_footer"><a onclick="showRegisterMenu()">Create an account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+		<!-- LOGIN SYSTEM BELOW -->
+		<div id="login_gui">
+			<div id="login_menu" class="menu" style="display:none;">
+				<div class="menu-header">Login Page <span class="speaker">&#128266;</span><span style="display:none;" class="speaker">&#128263;</span></div>
+				<div class="main_login">
+					<form id="login_form">
+						<div id="user_login"><input placeholder="Username" type="text"></input></div>
+						<div id="pass_login"><input placeholder="Password" type="password"></input></div>
+						<div id="submit_login"><input type="submit" value="Sign in"></input></div>
+					</form>
+				<div class="menu_footer"><a onclick="showRegisterMenu()">Create an account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+				</div>
+			</div>
+			
+			<div id="register_menu" class="menu" style="display:none;">
+				<div class="menu-header">Register Page <span class="speaker">&#128266;</span><span style="display:none;" class="speaker">&#128263;</span></div>
+				<div class="main_register">
+					<form id="register_form">
+						<div id="email_register"><input placeholder="Email Address" type="email"></input></div>
+						<div id="user_register"><input placeholder="Username" type="text"></input></div>
+						<div id="pass_register"><input placeholder="Password" type="password"></input></div>
+						<div id="submit_register"><input type="submit" value="Register"></input></div>
+					</form>
+				<div class="menu_footer"><a onclick="showLoginMenu()">Sign in to your account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+				</div>
 			</div>
 		</div>
 		
-		<div id="register_menu" class="menu" style="display:none;">
-			<div class="menu-header">Register Page <span class="speaker">&#128266;</span><span style="display:none;" class="speaker">&#128263;</span></div>
-			<div class="main_register">
-				<form id="register_form">
-					<div id="email_register"><input placeholder="Email Address" type="email"></input></div>
-					<div id="user_register"><input placeholder="Username" type="text"></input></div>
-					<div id="pass_register"><input placeholder="Password" type="password"></input></div>
-					<div id="submit_register"><input type="submit" value="Register"></input></div>
-				</form>
-			<div class="menu_footer"><a onclick="showLoginMenu()">Sign in to your account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
+		<!-- INVENTORY SYSTEM BELOW -->
+		<div id="inventory_menu" style="display:none;">
+			<div class="top_border">
+				<div class="menu_title">Inventory</div>
+				<div class="close_button" onclick="close_inv_pressed()"><span class="close_text">Close</span><span class="cross">&times;</span></div>
+			</div>
+			<div id="grids">
+				<div id="grid_wrapper"> <div id="nearby_text">Nearby:</div>
+				<div id="firstgrid" class="inventory_grid">
+				</div>
+				</div>
+				<div id="secondgrid" class="inventory_grid"></div>
 			</div>
 		</div>
 	</body>
