@@ -1,3 +1,7 @@
+  /*-------------------------------- */
+ /* LOGIN SYSTEM BY: VAFFANCULO and JUBJUB */
+/*-------------------------------- */
+
 html, body {
    height: 100%;
 	-webkit-user-select: none; /* Chrome/Safari */   
@@ -84,4 +88,100 @@ color: #FFFFFF;
 	margin-left:80px;
 	margin-right:80px;
 	margin-top:5px;
+}
+  
+  
+  /*-------------------------------- */
+ /* INVENTORY SYSTEM BY: VAFFANCULO */
+/*-------------------------------- */
+
+#grids {
+	display:flex;
+	align-content: space-between;
+}
+#firstgrid {
+	padding-right: 50px;
+	width:150px;
+	height:168px;
+}
+#secondgrid {
+	width: 200px;
+	heght: 252px;
+}
+
+.inventory_grid {
+	display:flex;
+	display:-webkit-flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-content:center;
+}
+
+#nearby_text {
+	color:rgb(111,156,50);
+	font-family: 'Segoe UI', 'Segoe UI Symbol', Arial, sans-serif;
+	font-size:110%;
+	padding-right: 50px;
+	text-align: center;
+}
+
+#inventory_menu {
+	width: 400px;
+	height: 300px;
+	background-color: rgba(0, 0, 0, 0.3);
+	border-color:black;
+	border-style:solid;
+	border-radius:2px;
+	border-width:7px;
+	border-top: 0px;
+}
+
+.menu_slot {
+	background-color:gray;
+	width:40px;
+	height:40px;
+	margin:1px;
+	position: relative;
+}
+
+.menu_slot:hover {
+	background-color:lightgray;
+}
+
+.item_img {
+  max-width:100%;
+  max-height:100%;
+  position: absolute;
+  top: 0; bottom:0; left: 0; right:0;
+  margin: auto;
+  z-index: 1;
+}
+.top_border {
+	width: 400px;
+	height:33px;
+	background-color: rgba(0, 0, 0, 1);
+	cursor: move;
+	margin-bottom: 8px;
+	display:flex;
+	justify-content: space-between;
+	align-content: center;
+	color:rgb(111,156,50);
+	font-family: 'Segoe UI', 'Segoe UI Symbol', Arial, sans-serif;
+	font-size:140%;
+}
+.drop_hover {
+	background-color: lightgray;
+}
+
+.item_count {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	color: white;
+	font-size: 75%;
+	z-index:2;
+}
+
+.close_button:hover {
+	color:rgb(100,130,45);
 }
