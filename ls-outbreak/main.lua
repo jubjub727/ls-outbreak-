@@ -21,6 +21,7 @@ local WeaponTypes = {"weapon_bat", "weapon_pistol50", "weapon_combatpdw", "weapo
 
 -- Actual Code
 
+AddClientScript("sha1.lua")
 AddClientScript("playerMain.lua")
 
 --local sha2 = dofile("sha2.lua")
@@ -31,6 +32,15 @@ local Players = {}
 
 Player:On("login:login", function(ply, username, password) 
 	if (Login(ply, username, password)) then
+        ply:setPosition(0,0,0)
+		Player:TriggerClient("closemenus")
+    else
+        ply:kick()
+    end
+end)
+
+Player:On("login:register", function(ply, username, password, email) 
+	if (Register(ply, username, password, email)) then
         ply:setPosition(0,0,0)
 		Player:TriggerClient("closemenus")
     else
@@ -58,10 +68,11 @@ end
 function Register(ply, username, password, email)
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s';", username)
 
-    if (result[1] == nil) then
+    if not (result[1] == nil) then
         return false
     else
         conn:noQuery("INSERT INTO users (username, password, email) VALUES ('%s','%s','%s');", username, password, email)
+        table.insert(Players, {result.uid, ply})
         return true
     end
 end
