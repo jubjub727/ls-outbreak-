@@ -10,8 +10,9 @@ browser:on("load", function()
 end)
 
 browser:on("login", function(username, password)
+	local pass = sha(password)
 	local pl = Native.PlayerId()
-	Server:Trigger("login:login", username, password)
+	Server:Trigger("login:login", username, pass)
 end)
 
 Server:On("closemenus", function()
