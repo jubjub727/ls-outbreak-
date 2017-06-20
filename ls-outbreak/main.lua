@@ -163,7 +163,7 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        CreateItem(params[1], x, y, z)
+        CreateItem(params[1], x, y, z-1)
     end
 end )
 
