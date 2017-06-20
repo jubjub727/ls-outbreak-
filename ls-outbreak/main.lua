@@ -118,7 +118,6 @@ local function CreateItem(item, x, y, z)
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
 			
-			      Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
             table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
