@@ -51,8 +51,8 @@ $(function() {
 	}
 	
 	/* Debug */
-	addItemInventory(6, "abc", "abc", 5, "plus");
-	addItemInventory(7, "abc", "abc", 3, "plus");
+	addItemInventory(6, "%amount of kecske", "abc", 5, "plus");
+	addItemInventory(7, "%amount of kecske", "asd", 3, "plus");
 	
 	$(".menu_slot").droppable({
 		accept: ".item_img", 
@@ -152,8 +152,7 @@ function handleDrop(event, ui) {
 		}
 		$(event.target).append(ui.draggable[0].parentElement);
 			
-		$("body").remove("ui-helper-hidden-accessible");
-		$(".menu_slot").tooltip();
+		updateHelperText(event.target.firstChild) // Update helper text for the moved item
 	}
 	/* CTRL WAS PRESSED */
 	else {
@@ -169,12 +168,14 @@ function handleDrop(event, ui) {
 			starting_item.itemcount = Math.ceil(starting_item.itemcount / 2); // Half the starting item's itemcount
 			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
 			total = total - starting_item.itemcount; // total = remainder
+			updateHelperText(starting_item); // Update starting item's helper_text
 			
 			/* Ending item */
 			$(ending_slot).append($(starting_item).clone()); //Clone so the original won't disappear
 			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
 			var ending_item = ending_slot.firstChild;
 			var ending_img = ending_item.firstChild;
+			ending_item.helper_text = starting_item.helper_text;
 			
 			if (total <= 0) {ending_item.itemcount = 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
 			else {ending_item.itemcount = total} // Else the ending item's itemcount becomes the remainder
@@ -184,6 +185,7 @@ function handleDrop(event, ui) {
 			ending_img.style.top = 0; // Reset top
 			ending_img.style.left = 0; // Reset left
 			
+			updateHelperText(ending_item); // Update ending item's helper_text
 			
 			
 		}
@@ -197,15 +199,18 @@ function handleDrop(event, ui) {
 			var total = starting_item.itemcount; // Total number of items
 			starting_item.itemcount = Math.ceil(starting_item.itemcount / 2);
 			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
+			updateHelperText(starting_item); // Update starting item's helper text
 			total -= starting_item.itemcount; // The remainder
 			
-			console.log(total);
 			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
 			
 			/* Add the remainder to the second item*/
 			if (total <= 0) {ending_item.itemcount += 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
 			else {ending_item.itemcount += total} // Else add the remainder to the ending_item's itemcount
 			ending_item.children[1].innerHTML = ending_item.itemcount + "x"; // Display the new itemcount for the second item
+			
+			ending_item.helper_text = starting_item.helper_text;
+			updateHelperText(ending_item); // Update ending item's helper text
 			
 		}
 		/* Update tooltips*/
@@ -231,9 +236,17 @@ function closeInv() {
 };
 
 function deleteItem(item) {
-	console.log(item);
 	$(item).remove();
-}
+};
+
+function updateHelperText(item) {
+	$(item)[0].children[0].title = item.helper_text.replace("%amount", item.itemcount).replace("%name", item.itemname).replace("%plusdata", item.data).replace("%ItemCount", item.itemcount + "x");
+	$(".ui-helper-hidden-accessible").remove(); // Remove all tooltip helpers
+	$(".ui-tooltip").remove(); // Remove active tooltips
+	$(".menu_slot").tooltip(); // Reactivate tooltips
+	
+	
+};
 
 function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
 	if (slot > 24 || slot < 0) {
@@ -245,6 +258,7 @@ function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
 	$(".inventory_slot")[slot].children[0].data = plusdata;
 	$(".inventory_slot")[slot].children[0].itemcount = itemcount;
 	$(".inventory_slot")[slot].children[0].itemname = itemname;
+	$(".inventory_slot")[slot].children[0].helper_text = helper_text;
 	updateDraggables();
 };
 
@@ -266,6 +280,7 @@ function addItemNearby(slot, helper_text, itemname, itemcount, plusdata) {
 	$(".nearby_slot")[slot].children[0].data = plusdata;
 	$(".nearby_slot")[slot].children[0].itemcount = itemcount;
 	$(".nearby_slot")[slot].children[0].itemname = itemname;
+	$(".inventory_slot")[slot].children[0].helper_text = helper_text;
 	$(".item_img").draggable( {
 	revert:"invalid",
 	stop: function(event, ui) {event.target.style = "";},
