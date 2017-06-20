@@ -118,7 +118,14 @@ local function CreateItem(item, x, y, z)
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
 			
-            table.insert(Items, {name,desc,model,obj,type,extra})
+            local newItem = {}
+            newItem.name = name
+            newItem.desc = desc
+            newItem.model = model
+            newItem.obj = obj
+            newItem.type = type
+            newItem.extra = extra
+            table.insert(Items, newItem)
             return k
         end
     end
@@ -126,7 +133,7 @@ local function CreateItem(item, x, y, z)
 end
 
 local function RemoveItem(index)
-    local obj = Items[index][4]
+    local obj = Items[index].obj
 
     obj:delete()
     table.remove(Items, index)
