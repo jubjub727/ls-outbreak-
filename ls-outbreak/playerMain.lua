@@ -17,8 +17,6 @@ browser:on("load", function()
 	print("[Inventory] load complete")
 	inv_loaded = true
 	browser:execJS("closeInv();")
-	addItemInventory(6,"%amount of %name",  "Vehicle Key", 1, "apple")
-	addItemNearby(7,"%amount of %name",  "Vehicle Key", 5, "apple")
 end)
 
 browser:on("login", function(username, password)
@@ -74,22 +72,32 @@ Server:On("KeyPress", function(key)
 	end
 end)
 
+Server:On("inventory:addinventoryitem", function(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	print(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	addItemInventory(slot, item_index, helper_text, type, amount, plusdata, image_src)
+end)
+
+Server:On("inventory:addnearbyitem", function(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	addItemNearby(slot, item_index, helper_text, type, amount, plusdata, image_src)
+end)
+
 browser:on("inventory:close_inv", function()
 	closeInv()
 end)
-browser:on("inventory:showStackUI", function()
-	showStackUI()
+
+browser:on("inventory:itemdropped", function()
+	Server:Trigger("inventory:itemdropped")
 end)
-browser:on("inventory:closeStackUI", function()
-	showStackUI()
+browser:on("inventory:itempickedup", function()
+	Server:Trigger("inventory:itempickedup")
 end)
 
-function addItemInventory(slot, helper_text, type, amount, plusdata)
-	browser:execJS(string.format('addItemInventory(%s, "%s", "%s", %s, "%s");', slot, helper_text, type, amount, plusdata))
+function addItemInventory(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	browser:execJS(string.format('addItemInventory(%s, %s, "%s", "%s", %s, "%s", "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
 end
 
-function addItemNearby(slot, helper_text, type, amount, plusdata)
-	browser:execJS(string.format('addItemNearby(%s, "%s", "%s", %s, "%s");', slot, helper_text, type, amount, plusdata))
+function addItemNearby(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	browser:execJS(string.format('addItemNearby(%s, %s, "%s", "%s", %s, "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
 end
 
 function closeInv()

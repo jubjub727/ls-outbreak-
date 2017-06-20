@@ -99,7 +99,7 @@ local function Login(ply, username, password)
 	print("User "..username.." Logging In")
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
 
-	if not (result[1] == nil) then
+	if not (result[1] == nil) then	
         table.insert(Players, {result[1].uid, ply})
         return true
     else
@@ -117,7 +117,8 @@ local function CreateItem(item, x, y, z)
             local desc = ItemList[k][3]
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
-
+			
+			      Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
             table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
