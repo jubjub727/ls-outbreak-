@@ -110,16 +110,15 @@ end
 
 local function CreateItem(item, x, y, z)
     for k,v in pairs(ItemList) do
-		if v[1] == item then
-			local obj = Object:Create(ItemList[k][4], x, y, z)
+        if v[1] == item then
+            local obj = Object:Create(ItemList[k][4], x, y, z, 90, 0, 0)
             local model = ItemList[k][4]
             local name = ItemList[k][2]
             local desc = ItemList[k][3]
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
 			
-			Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
-			
+			      Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
             table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
@@ -165,7 +164,7 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        CreateItem(params[1], x, y, z)
+        CreateItem(params[1], x, y, z-1)
     end
 end )
 
