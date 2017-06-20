@@ -139,7 +139,7 @@ Player:On("login:login", function(ply, username, password)
     else
         ply:kick()
     end
-end)
+end )
 
 Player:On("login:register", function(ply, username, password, email) 
 	if (Register(ply, username, password, email)) then
@@ -148,7 +148,7 @@ Player:On("login:register", function(ply, username, password, email)
     else
         ply:kick()
     end
-end)
+end )
 
 Player:On("disconnect", function(ply) -- When a player disconnects go through our table and find them and remove them from our table
     for k,v in pairs(Players) do
@@ -163,7 +163,7 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        CreateItem(params[1])
+        CreateItem(params[1], x, y, z)
     end
 end )
 
