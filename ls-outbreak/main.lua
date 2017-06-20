@@ -118,6 +118,7 @@ local function CreateItem(item, x, y, z)
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
 			
+<<<<<<< HEAD
             local newItem = {}
             newItem.name = name
             newItem.desc = desc
@@ -126,6 +127,10 @@ local function CreateItem(item, x, y, z)
             newItem.type = type
             newItem.extra = extra
             table.insert(Items, newItem)
+=======
+			      Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+            table.insert(Items, {name,desc,model,obj,type,extra})
+>>>>>>> 930799a9292cc29aa3c07fa67b35e34afd86804a
             return k
         end
     end
@@ -170,9 +175,13 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
+<<<<<<< HEAD
         i = CreateItem(params[1], x, y, z-1)
 		ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
 		--ply:triggerClient("inventory:addinventoryitem", -1, i, "%amount of %name", string.format("%s", Items[i].name), 1, string.format("%s", Items[i].extra), "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+=======
+        CreateItem(params[1], x, y, z-1)
+>>>>>>> 930799a9292cc29aa3c07fa67b35e34afd86804a
     end
 end )
 
