@@ -111,7 +111,7 @@ end
 local function CreateItem(item, x, y, z)
     for k,v in pairs(ItemList) do
         if v[1] == item then
-            local obj = Object:Create(ItemList[k][4], x, y, z)
+            local obj = Object:Create(ItemList[k][4], x, y, z, 90, 0, 0)
             local model = ItemList[k][4]
             local name = ItemList[k][2]
             local desc = ItemList[k][3]
