@@ -50,10 +50,6 @@ $(function() {
 		$("#secondgrid").append("<div class='menu_slot inventory_slot' ></div>");
 	}
 	
-	/* Debug */
-	addItemInventory(6, "%amount of kecske", "abc", 5, "plus");
-	addItemInventory(7, "%amount of kecske", "asd", 3, "plus");
-	
 	$(".menu_slot").droppable({
 		accept: ".item_img", 
 		hoverClass: "drop_hover", 
@@ -135,6 +131,10 @@ function areSame(first_element, second_element) {
 	return $(first_element).is($(second_element));
 };
 
+function isSlotNearby(slot) {
+	return $(slot).hasClass("nearby_slot");
+};
+
 function handleDrop(event, ui) {
 	/* CTRL WAS NOT PRESSED */
 	if (ctrlPressed != true) {
@@ -150,7 +150,15 @@ function handleDrop(event, ui) {
 			}
 			event.target.innerHTML = "";
 		}
+		var wasNearby = isSlotNearby(ui.draggable[0].parentElement.parentElement);
+		/* There was no item in that slot*/
 		$(event.target).append(ui.draggable[0].parentElement);
+		if (isSlotNearby(event.target) && wasNearby != isSlotNearby(event.target)) {
+			TriggerEvent("inventory:itemdropped")
+		}
+		else if  (!isSlotNearby(event.target) && wasNearby != isSlotNearby(event.target)) {
+			TriggerEvent("inventory:itempickedup")
+		}
 			
 		updateHelperText(event.target.firstChild) // Update helper text for the moved item
 	}
@@ -162,6 +170,7 @@ function handleDrop(event, ui) {
 			
 			/* Total number of items in the starting item*/
 			var starting_item = ui.draggable[0].parentElement;
+			var was_starting_slot_nearby = isSlotNearby(starting_item.parentElement); 
 			var total = starting_item.itemcount;
 			var ending_slot = event.target;
 			/* Starting item */
@@ -187,6 +196,14 @@ function handleDrop(event, ui) {
 			
 			updateHelperText(ending_item); // Update ending item's helper_text
 			
+			/* Check if moved from inv to nearby or from nearby to inv*/
+			if (isSlotNearby(ending_item.parentElement) && !was_starting_slot_nearby) {
+				TriggerEvent("inventory:itemdropped");
+			}
+			else if (!isSlotNearby(ending_item.parentElement) && was_starting_slot_nearby) {
+				TriggerEvent("inventory:itempickedup")
+			}
+			
 			
 		}
 		/* There is an item in that slot*/
@@ -194,6 +211,7 @@ function handleDrop(event, ui) {
 			if (areSame(event.target.firstChild, ui.draggable[0].parentElement)) {return} // If the two elements are the same, then don't do anything.
 			
 			var starting_item = ui.draggable[0].parentElement; // The item the user started dragging
+			var was_starting_slot_nearby = isSlotNearby(starting_item.parentElement);
 			var ending_item = event.target.firstChild; // The dropped item
 			
 			var total = starting_item.itemcount; // Total number of items
@@ -211,6 +229,13 @@ function handleDrop(event, ui) {
 			
 			ending_item.helper_text = starting_item.helper_text;
 			updateHelperText(ending_item); // Update ending item's helper text
+			
+			if (isSlotNearby(ending_item.parentElement) && !was_starting_slot_nearby) {
+				TriggerEvent("inventory:itemdropped");
+			}
+			else if (!isSlotNearby(ending_item.parentElement) && was_starting_slot_nearby) {
+				TriggerEvent("inventory:itempickedup")
+			}
 			
 		}
 		/* Update tooltips*/
@@ -248,17 +273,23 @@ function updateHelperText(item) {
 	
 };
 
-function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
+function addItemInventory(slot, item_index, helper_text, itemname, itemcount, plusdata, image_src) {
 	if (slot > 24 || slot < 0) {
-		return
+		if (slot == -1) {
+			slot = getFirstEmptyNearbySlotIndex();
+		}
+		else {
+			return
+		}
 	}
 	
-	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='http://orange/server/resources/ls-outbreak/html/img/car_key.png' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x");
+	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".inventory_slot")[slot]).tooltip();
 	$(".inventory_slot")[slot].children[0].data = plusdata;
 	$(".inventory_slot")[slot].children[0].itemcount = itemcount;
 	$(".inventory_slot")[slot].children[0].itemname = itemname;
 	$(".inventory_slot")[slot].children[0].helper_text = helper_text;
+	$(".inventory_slot")[slot].children[0].item_index = item_index;
 	updateDraggables();
 };
 
@@ -270,17 +301,23 @@ function updateDraggables() {
 	});
 };
 
-function addItemNearby(slot, helper_text, itemname, itemcount, plusdata) {
+function addItemNearby(slot, item_index, helper_text, itemname, itemcount, plusdata, image_src) {
 	if (slot > 12 || slot < 0) {
-		return
+		if (slot == -1) {
+			slot = getFirstEmptyNearbySlotIndex();
+		}
+		else {
+			return
+		}
 	}
 	
-	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='http://orange/server/resources/ls-outbreak/html/img/car_key.png' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x");
+	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".nearby_slot")[slot]).tooltip();
 	$(".nearby_slot")[slot].children[0].data = plusdata;
 	$(".nearby_slot")[slot].children[0].itemcount = itemcount;
 	$(".nearby_slot")[slot].children[0].itemname = itemname;
 	$(".inventory_slot")[slot].children[0].helper_text = helper_text;
+	$(".inventory_slot")[slot].children[0].item_index = item_index;
 	$(".item_img").draggable( {
 	revert:"invalid",
 	stop: function(event, ui) {event.target.style = "";},

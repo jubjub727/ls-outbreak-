@@ -12,15 +12,13 @@ Feel free to add me for support but I'll block you if you're annoying.
 
 local WeaponTypes = {"weapon_bat", "weapon_pistol50", "weapon_combatpdw", "weapon_microsmg", "weapon_assaultshotgun", "weapon_carbinerifle", "weapon_assaultrifle", "weapon_flare", "weapon_sniperrifle"}
 
-local ItemList = {"assault_rifle", "soda"}
-
 -- End Config
 
 -- Advanced
 
-local ItemTypes = {"weapon", "food"}
+local ItemTypes = {"weapon", "food", "ammo"}
 
-local ItemData = {{"assault_rifle", "Assault Rifle", "w_ar_assaultrifle", "weapon", "weapon_assaultrifle"}, {"soda", "Soda", "prop_food_bs_soda_01", "food", 10}}
+local ItemList = {{"assault_rifle", "Assault Rifle", "A fully automatic rifle", "w_ar_assaultrifle", "weapon", "weapon_assaultrifle"}}
 
 -- End Advanced
 
@@ -34,7 +32,7 @@ AddClientScript("playerMain.lua")
 
 local conn
 
-local Items = {}
+Items = {}
 
 local Players = {}
 
@@ -101,13 +99,39 @@ local function Login(ply, username, password)
 	print("User "..username.." Logging In")
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
 
-	if not (result[1] == nil) then
+	if not (result[1] == nil) then	
         table.insert(Players, {result[1].uid, ply})
         return true
     else
         print("User "..username.." Wrong Password")
         return false
     end
+end
+
+local function CreateItem(item, x, y, z)
+    for k,v in pairs(ItemList) do
+		if v[1] == item then
+			local obj = Object:Create(ItemList[k][4], x, y, z)
+            local model = ItemList[k][4]
+            local name = ItemList[k][2]
+            local desc = ItemList[k][3]
+            local type = ItemList[k][5]
+            local extra = ItemList[k][6]
+			
+			Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+			
+            table.insert(Items, {name,desc,model,obj,type,extra})
+            return k
+        end
+    end
+    return -1
+end
+
+local function RemoveItem(index)
+    local obj = Items[index][4]
+
+    obj:delete()
+    table.remove(Items, index)
 end
 
 Player:On("login:login", function(ply, username, password) 
@@ -117,7 +141,7 @@ Player:On("login:login", function(ply, username, password)
     else
         ply:kick()
     end
-end)
+end )
 
 Player:On("login:register", function(ply, username, password, email) 
 	if (Register(ply, username, password, email)) then
@@ -126,7 +150,7 @@ Player:On("login:register", function(ply, username, password, email)
     else
         ply:kick()
     end
-end)
+end )
 
 Player:On("disconnect", function(ply) -- When a player disconnects go through our table and find them and remove them from our table
     for k,v in pairs(Players) do
@@ -141,21 +165,7 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        for k,v in pairs(ItemList) do
-            if v == params[1] then
-                local obj = Object:Create(ItemData[k][3], x, y, z, false)
-                local name = ItemData[k][2]
-                table.insert(Items, {name,obj})
-            end
-        end
-    end
-
-    if cmd == "clear" then
-        for k,v in pairs(Items) do
-            v[2]:delete()
-        end
-
-        Items = {}
+        CreateItem(params[1], x, y, z)
     end
 end )
 
