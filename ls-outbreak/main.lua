@@ -12,9 +12,15 @@ Feel free to add me for support but I'll block you if you're annoying.
 
 local WeaponTypes = {"weapon_bat", "weapon_pistol50", "weapon_combatpdw", "weapon_microsmg", "weapon_assaultshotgun", "weapon_carbinerifle", "weapon_assaultrifle", "weapon_flare", "weapon_sniperrifle"}
 
+local ItemList = {"assault_rifle", "soda"}
+
 -- End Config
 
 -- Advanced
+
+local ItemTypes = {"weapon", "food"}
+
+local ItemData = {{"assault_rifle", "Assault Rifle", "w_ar_assaultrifle", "weapon", "weapon_assaultrifle"}, {"soda", "Soda", "prop_food_bs_soda_01", "food", 10}}
 
 -- End Advanced
 
@@ -27,6 +33,8 @@ AddClientScript("playerMain.lua")
 --local sha2 = dofile("sha2.lua")
 
 local conn
+
+local Items = {}
 
 local Players = {}
 
@@ -127,6 +135,28 @@ Player:On("disconnect", function(ply) -- When a player disconnects go through ou
             conn:noQuery("UPDATE positionData SET lastX = %s, lastY = %s, lastZ = %s WHERE uid=%s;", x, y, z, v[1])
             table.remove(Players, k)
         end
+    end
+end )
+
+Player:On("command", function(ply, cmd, params)
+    local x,y,z = ply:getPosition()
+
+    if cmd == "object" then
+        for k,v in pairs(ItemList) do
+            if v == params[1] then
+                local obj = Object:Create(ItemData[k][3], x, y, z, false)
+                local name = ItemData[k][2]
+                table.insert(Items, {name,obj})
+            end
+        end
+    end
+
+    if cmd == "clear" then
+        for k,v in pairs(Items) do
+            v[2]:delete()
+        end
+
+        Items = {}
     end
 end )
 
