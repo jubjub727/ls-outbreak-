@@ -140,7 +140,6 @@ end )
 
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
-
     if cmd == "object" then
         for k,v in pairs(ItemList) do
             if v == params[1] then

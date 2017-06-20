@@ -50,6 +50,10 @@ $(function() {
 		$("#secondgrid").append("<div class='menu_slot inventory_slot' ></div>");
 	}
 	
+	/* Debug */
+	addItemInventory(6, "abc", "abc", 5, "plus");
+	addItemInventory(7, "abc", "abc", 3, "plus");
+	
 	$(".menu_slot").droppable({
 		accept: ".item_img", 
 		hoverClass: "drop_hover", 
@@ -127,9 +131,16 @@ document.onkeyup = function(e) {
 	
 }
 
+function areSame(first_element, second_element) {
+	return $(first_element).is($(second_element));
+};
+
 function handleDrop(event, ui) {
+	/* CTRL WAS NOT PRESSED */
 	if (ctrlPressed != true) {
+		/* There was an item in that slot */
 		if (event.target.children.length != 0) {
+			if (areSame(event.target.firstChild, ui.draggable[0].parentElement)) {return} // If the two elements are the same, then don't do anything.
 			if (event.target.firstChild.itemname == ui.draggable[0].parentElement.itemname || event.target.firstChild.plusdata == ui.draggable[0].parentElement.plusdata) {
 				ui.draggable[0].parentElement.itemcount = ui.draggable[0].parentElement.itemcount + event.target.firstChild.itemcount;
 				ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
@@ -144,37 +155,64 @@ function handleDrop(event, ui) {
 		$("body").remove("ui-helper-hidden-accessible");
 		$(".menu_slot").tooltip();
 	}
+	/* CTRL WAS PRESSED */
 	else {
-		if (event.target.children.length != 0) {
-			if (event.target.firstChild.itemname == ui.draggable[0].parentElement.itemname || event.target.firstChild.plusdata == ui.draggable[0].parentElement.plusdata) {
-				ui.draggable[0].parentElement.itemcount = Math.floor(ui.draggable[0].parentElement.itemcount / 2) + event.target.firstChild.itemcount;
-				ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
-			}
-			else {
-				$(ui.draggable[0].from).append(event.target.firstChild);
-			}
+		event.preventDefault()
+		/* There was no item in that slot*/
+		if (event.target.children.length == 0) {
+			
+			/* Total number of items in the starting item*/
+			var starting_item = ui.draggable[0].parentElement;
+			var total = starting_item.itemcount;
+			var ending_slot = event.target;
+			/* Starting item */
+			starting_item.itemcount = Math.ceil(starting_item.itemcount / 2); // Half the starting item's itemcount
+			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
+			total = total - starting_item.itemcount; // total = remainder
+			
+			/* Ending item */
+			$(ending_slot).append($(starting_item).clone()); //Clone so the original won't disappear
+			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
+			var ending_item = ending_slot.firstChild;
+			var ending_img = ending_item.firstChild;
+			
+			if (total <= 0) {ending_item.itemcount = 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
+			else {ending_item.itemcount = total} // Else the ending item's itemcount becomes the remainder
+			ending_item.children[1].innerHTML = ending_item.itemcount + "x"; // Display new itemcount
+			
+			/* Reset position of the ending item/image */
+			ending_img.style.top = 0; // Reset top
+			ending_img.style.left = 0; // Reset left
+			
+			
+			
 		}
+		/* There is an item in that slot*/
 		else {
-			ui.draggable[0].parentElement.itemcount = Math.floor(ui.draggable[0].parentElement.itemcount / 2)
-			ui.draggable[0].parentElement.children[1].innerHTML = ui.draggable[0].parentElement.itemcount + "x";
-			$(event.target).append($(ui.draggable[0].parentElement).clone());
-			event.target.firstChild.firstChild.style.top = ""
-			event.target.firstChild.firstChild.style.left = ""
-			event.target.firstChild.firstChild.title = ui.draggable[0].title
-			event.target.firstChild.itemcount = ui.draggable[0].parentElement.itemcount
-			console.log(event.target.firstChild)
-			$(event.target.firstChild.firstChild).draggable( {
-				revert:"invalid",
-				stop: function(event, ui) {event.target.style = "";},
-				start: function(event, ui) {this.from = this.parentElement.parentElement;}
-			});
+			if (areSame(event.target.firstChild, ui.draggable[0].parentElement)) {return} // If the two elements are the same, then don't do anything.
 			
+			var starting_item = ui.draggable[0].parentElement; // The item the user started dragging
+			var ending_item = event.target.firstChild; // The dropped item
 			
+			var total = starting_item.itemcount; // Total number of items
+			starting_item.itemcount = Math.ceil(starting_item.itemcount / 2);
+			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
+			total -= starting_item.itemcount; // The remainder
 			
+			console.log(total);
+			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
+			
+			/* Add the remainder to the second item*/
+			if (total <= 0) {ending_item.itemcount += 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
+			else {ending_item.itemcount += total} // Else add the remainder to the ending_item's itemcount
+			ending_item.children[1].innerHTML = ending_item.itemcount + "x"; // Display the new itemcount for the second item
 			
 		}
-		$("body").remove("ui-helper-hidden-accessible");
-		$(".menu_slot").tooltip();
+		/* Update tooltips*/
+		$("body").remove("ui-helper-hidden-accessible"); // Remove all existing tooltips
+		$(".menu_slot").tooltip(); // Add tooltip to every slot
+		
+		updateDraggables(); // Update draggables
 	}
 	
 };
@@ -192,6 +230,11 @@ function closeInv() {
 	$("#inventory_menu").hide();
 };
 
+function deleteItem(item) {
+	console.log(item);
+	$(item).remove();
+}
+
 function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
 	if (slot > 24 || slot < 0) {
 		return
@@ -202,6 +245,10 @@ function addItemInventory(slot, helper_text, itemname, itemcount, plusdata) {
 	$(".inventory_slot")[slot].children[0].data = plusdata;
 	$(".inventory_slot")[slot].children[0].itemcount = itemcount;
 	$(".inventory_slot")[slot].children[0].itemname = itemname;
+	updateDraggables();
+};
+
+function updateDraggables() {
 	$(".item_img").draggable( {
 	revert:"invalid",
 	stop: function(event, ui) {event.target.style = "";},
