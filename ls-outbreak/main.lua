@@ -110,17 +110,22 @@ end
 
 local function CreateItem(item, x, y, z)
     for k,v in pairs(ItemList) do
-		if v[1] == item then
-			local obj = Object:Create(ItemList[k][4], x, y, z)
+        if v[1] == item then
+            local obj = Object:Create(ItemList[k][4], x, y, z, 90, 0, 0)
             local model = ItemList[k][4]
             local name = ItemList[k][2]
             local desc = ItemList[k][3]
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
 			
-			Player:TriggerClient("inventory:addinventoryitem", -1, k, "%amount of %name", name, 1, extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
-			
-            table.insert(Items, {name,desc,model,obj,type,extra})
+            local newItem = {}
+            newItem.name = name
+            newItem.desc = desc
+            newItem.model = model
+            newItem.obj = obj
+            newItem.type = type
+            newItem.extra = extra
+            table.insert(Items, newItem)
             return k
         end
     end
@@ -128,7 +133,7 @@ local function CreateItem(item, x, y, z)
 end
 
 local function RemoveItem(index)
-    local obj = Items[index][4]
+    local obj = Items[index].obj
 
     obj:delete()
     table.remove(Items, index)
@@ -165,7 +170,9 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        CreateItem(params[1], x, y, z)
+        i = CreateItem(params[1], x, y, z-1)
+		ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+		--ply:triggerClient("inventory:addinventoryitem", -1, i, "%amount of %name", string.format("%s", Items[i].name), 1, string.format("%s", Items[i].extra), "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
     end
 end )
 
