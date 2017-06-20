@@ -73,7 +73,6 @@ Server:On("KeyPress", function(key)
 end)
 
 Server:On("inventory:addinventoryitem", function(slot, item_index, helper_text, typea, amount, plusdata, image_src)
-	print(slot, item_index, helper_text, typea, amount, plusdata, image_src)
 	addItemInventory(slot, item_index, helper_text, type, amount, plusdata, image_src)
 end)
 
