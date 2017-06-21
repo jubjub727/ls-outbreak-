@@ -144,23 +144,27 @@ local function GetItemData(index)
 end
 
 Player:On("pickUpItem", function(ply, index)
+    print("Removing Item "..GetItemData(index).name.." - "..index)
 	RemoveItem(index)
 end )
 
 Player:On("dropItem", function(ply, name, desc, model, type)
+    print("Dropped "..name)
 	for k,v in pairs(ItemList) do
-        if v[2] == name and v[3] == desc and v[4] == model and v[5] == type then
+        if (v[2] == name) and (v[3] == desc) and (v[4] == model) and (v[5] == type) then
+            print("Creating Item "..v[1])
             local x,y,z = ply:getPosition()
-            CreateItem(v, x, y, z)
+            CreateItem(v[1], x, y, z)
         end
     end
 end )
 
 Player:On("requestItem", function(ply, index)
     local itemData = GetItemData(index)
-    itemData.obj = ""
-
-    ply:triggerClient("receiveItem", itemData.name, itemData.desc, itemData.model, itemData.type, itemData.extra)
+    --itemData.obj = ""
+    if not (itemData == nil) then
+        ply:triggerClient("receiveItem", itemData.name, itemData.desc, itemData.model, itemData.type, itemData.extra)
+    end
 end )
 
 Player:On("requestNearItems", function(ply, x, y, z)
@@ -205,8 +209,11 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        i = CreateItem(params[1], x, y, z-1)
+        local i = CreateItem(params[1], x, y, z-1)
 		--ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+    end
+    if cmd == "delete" then
+        RemoveItem(1)
     end
 end )
 
