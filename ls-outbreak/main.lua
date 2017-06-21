@@ -126,6 +126,8 @@ local function CreateItem(item, x, y, z)
             newItem.type = type
             newItem.extra = extra
             table.insert(Items, newItem)
+      
+            table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
     end
@@ -190,7 +192,8 @@ end )
 Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
-        CreateItem(params[1], x, y, z-1)
+        i = CreateItem(params[1], x, y, z-1)
+		    ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
     end
 end )
 

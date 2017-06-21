@@ -283,7 +283,7 @@ function addItemInventory(slot, item_index, helper_text, itemname, itemcount, pl
 		}
 	}
 	
-	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
+	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("__amount", itemcount).replace("__name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".inventory_slot")[slot]).tooltip();
 	$(".inventory_slot")[slot].children[0].data = plusdata;
 	$(".inventory_slot")[slot].children[0].itemcount = itemcount;
@@ -311,7 +311,7 @@ function addItemNearby(slot, item_index, helper_text, itemname, itemcount, plusd
 		}
 	}
 	
-	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("%amount", itemcount).replace("%name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
+	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("__amount", itemcount).replace("__name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".nearby_slot")[slot]).tooltip();
 	$(".nearby_slot")[slot].children[0].data = plusdata;
 	$(".nearby_slot")[slot].children[0].itemcount = itemcount;
