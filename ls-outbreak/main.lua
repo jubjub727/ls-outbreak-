@@ -126,8 +126,6 @@ local function CreateItem(item, x, y, z)
             newItem.type = type
             newItem.extra = extra
             table.insert(Items, newItem)
-      
-            table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
     end
@@ -146,11 +144,11 @@ local function GetItemData(index)
 end
 
 Player:On("pickUpItem", function(ply, index)
-    RemoveItem(index)
+	RemoveItem(index)
 end )
 
 Player:On("dropItem", function(ply, name, desc, model, type)
-    for k,v in pairs(ItemList) do
+	for k,v in pairs(ItemList) do
         if v[2] == name and v[3] == desc and v[4] == model and v[5] == type then
             local x,y,z = ply:getPosition()
             CreateItem(v, x, y, z)
@@ -160,7 +158,9 @@ end )
 
 Player:On("requestItem", function(ply, index)
     local itemData = GetItemData(index)
-    ply:triggerClient("receiveItem", itemData)
+    itemData.obj = ""
+
+    ply:triggerClient("receiveItem", itemData.name, itemData.desc, itemData.model, itemData.type, itemData.extra)
 end )
 
 Player:On("requestNearItems", function(ply, x, y, z)
@@ -179,7 +179,7 @@ Player:On("login:login", function(ply, username, password)
         spawnPlayer(ply)
 		ply:triggerClient("closemenus")
     else
-        ply:kick()
+        ply:kick("Wrong Login")
     end
 end )
 
@@ -188,7 +188,7 @@ Player:On("login:register", function(ply, username, password, email)
         spawnPlayer(ply)
 		ply:riggerClient("closemenus")
     else
-        ply:kick()
+        ply:kick("That Username Already Exists")
     end
 end )
 
