@@ -61,8 +61,16 @@ end)
 --------------------------------------
 
 local itemdata = -1
-Server:On("receiveItem", function(ply, item)
-	itemdata = item
+--Server:On("receiveItem", function(item)
+--	itemdata = item
+Server:On("receiveItem", function(name, desc, model, type, extra)
+	local newItem = {}
+	newItem.name = name
+	newItem.desc = desc
+	newItem.model = model
+	newItem.type = type
+	newItem.extra = extra
+	itemdata = newItem
 end )
 
 local function GetItem(index)
@@ -79,16 +87,14 @@ local function GetItem(index)
 end
 
 local items = -1
-local ply_getnear = 0;
-Server:On("receiveNearItems", function(ply, itemList)
+Server:On("receiveNearItems", function(itemList)
 	items = itemList
-	ply_getnear = ply
 end )
 
 local function GetNearItems(x, y, z)
 	Server:Trigger("requestNearItems", x, y, z)
 
-	while (itemdata == -1) do
+	while (items == -1) do
 		Thread:Wait()
 	end
 
@@ -161,12 +167,13 @@ end
 Thread:new(function()
 	while true do
 		if inv_loaded and inv_active then
+			local player = Native.PlayerPedId()
+			local x,y,z = Native.GetEntityCoords(player, 0)
 			local items = GetNearItems(x,y,z)
-			x,y,z = ply_getnear:getPosition()
-			--browser:execJS("clearNearbySlots();")	
+			browser:execJS("clearNearbySlots();")	
 			for k,v in pairs(items) do
+				print("Poop")
 				local item = GetItem(v)
-				print(item)
 				addItemNearby(-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
 			end
 		end

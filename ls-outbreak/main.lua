@@ -126,8 +126,6 @@ local function CreateItem(item, x, y, z)
             newItem.type = type
             newItem.extra = extra
             table.insert(Items, newItem)
-      
-            table.insert(Items, {name,desc,model,obj,type,extra})
             return k
         end
     end
@@ -160,7 +158,11 @@ end )
 
 Player:On("requestItem", function(ply, index)
     local itemData = GetItemData(index)
-    ply:triggerClient("receiveItem", itemData)
+    itemData.obj = ""
+
+    ply:triggerClient("receiveItem", itemData.name, itemData.desc, itemData.model, itemData.type, itemData.extra)
+
+    --ply:triggerClient("receiveItem", itemData)
 end )
 
 Player:On("requestNearItems", function(ply, x, y, z)
