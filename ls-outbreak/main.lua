@@ -151,7 +151,7 @@ Player:On("dropItem", function(ply, name, model, type)
 	for k,v in pairs(ItemList) do
         if (v[2] == name) and (v[4] == model) and (v[5] == type) then
             local x,y,z = ply:getPosition()
-            CreateItem(v[1], x, y, z)
+            CreateItem(v[1], x, y, z-1)
         end
     end
 end )

@@ -276,7 +276,7 @@ function updateHelperText(item) {
 };
 
 function  getImageSourceFromModel(model) {
-	model_img_array = {"w_ar_assaultrifle": "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png"}
+	model_img_array = {"w_ar_assaultrifle": "img/ass_rifle.png"}
 	return model_img_array[model]
 }
 
