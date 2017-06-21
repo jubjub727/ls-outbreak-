@@ -136,6 +136,8 @@ function isSlotNearby(slot) {
 };
 
 function handleDrop(event, ui) {
+	if ($(event.target).hasClass(".nearby_slot") && $(ui.draggable[0].parentElement).hasClass(".nearby_slot")) {event.preventDefault(); return;}
+	
 	/* CTRL WAS NOT PRESSED */
 	if (ctrlPressed != true) {
 		/* There was an item in that slot */
@@ -154,10 +156,10 @@ function handleDrop(event, ui) {
 		/* There was no item in that slot*/
 		$(event.target).append(ui.draggable[0].parentElement);
 		if (isSlotNearby(event.target) && wasNearby != isSlotNearby(event.target)) {
-			TriggerEvent("inventory:itemdropped")
+			TriggerEvent("inventory:itemdropped", ui.draggable[0].parentElement.item_index)
 		}
 		else if  (!isSlotNearby(event.target) && wasNearby != isSlotNearby(event.target)) {
-			TriggerEvent("inventory:itempickedup")
+			TriggerEvent("inventory:itempickedup", ui.draggable[0].parentElement.item_index)
 		}
 			
 		updateHelperText(event.target.firstChild) // Update helper text for the moved item
@@ -301,7 +303,31 @@ function updateDraggables() {
 	});
 };
 
+function checkNearbySlotBeforeAdding(slot_i, item_index, helper_text, itemname, itemcount, plusdata, image_src) {
+	if (slot_i == -1) {slot_i = getFirstEmptyNearbySlotIndex()}
+	nearby_slots = $(".nearby_slot")
+	slot = nearby_slots[slot_i];
+	/* There is an item there */
+	if (slot.firstChild != null) {
+		item = slot.firstChild;
+		/* The slot already has the same item, so don't do anything*/
+		if (item.item_index == item_index && item.helper_text == helper_text && item.itemname == itemname && item.itemcount == itemcount && item.data == plusdata) {
+			return true
+		}
+		else {
+			return false
+		}
+	}
+	/* There isn't an item there */
+	else {
+		return false
+	}
+}
+
 function addItemNearby(slot, item_index, helper_text, itemname, itemcount, plusdata, image_src) {
+	 if (checkNearbySlotBeforeAdding(slot, item_index, helper_text, itemname, itemcount, plusdata, image_src)) {
+		 return
+	 };
 	if (slot > 12 || slot < 0) {
 		if (slot == -1) {
 			slot = getFirstEmptyNearbySlotIndex();
@@ -310,14 +336,13 @@ function addItemNearby(slot, item_index, helper_text, itemname, itemcount, plusd
 			return
 		}
 	}
-	
 	$(".nearby_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("__amount", itemcount).replace("__name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".nearby_slot")[slot]).tooltip();
 	$(".nearby_slot")[slot].children[0].data = plusdata;
 	$(".nearby_slot")[slot].children[0].itemcount = itemcount;
 	$(".nearby_slot")[slot].children[0].itemname = itemname;
-	$(".inventory_slot")[slot].children[0].helper_text = helper_text;
-	$(".inventory_slot")[slot].children[0].item_index = item_index;
+	$(".nearby_slot")[slot].children[0].helper_text = helper_text;
+	$(".nearby_slot")[slot].children[0].item_index = item_index;
 	$(".item_img").draggable( {
 	revert:"invalid",
 	stop: function(event, ui) {event.target.style = "";},
@@ -330,12 +355,52 @@ function clearNearbySlots() {
 	for (i = 0; i < slots.length; i++) {
 		/* If its a nearby item, delete it*/
 		if ($(slots[i].parentElement).hasClass("nearby_slot")) {
-			console.log(slots[i])
 			$(slots[i]).remove();
 		}
 	}
 };
 
+var last_nearby_array = [];
+var nearby_array = [];
+function clearNearbyList() {
+	last_nearby_array = nearby_array;
+	nearby_array = [];
+}
+
+function addToNearbyArray(slot, item_index, helper_text, itemname, itemcount, plusdata, image_src) {
+	var obj = {};
+	obj["slot"] = slot;
+	obj["item_index"] = item_index;
+	obj["helper_text"] = helper_text;
+	obj["itemname"] = itemname;
+	obj["itemcount"] = itemcount;
+	obj["plusdata"] = plusdata;
+	obj["image_src"] = image_src;
+	nearby_array.push(obj);
+};
+
+function addNearbyItems() {
+	if (_addNearbyItems()) {
+		clearNearbySlots();
+		for (i = 0; i < nearby_array.length; i++) {
+			var item = nearby_array[i];
+			addItemNearby(item["slot"], item["item_index"], item["helper_text"], item["itemname"], item["itemcount"], item["plusdata"], item["image_src"]);
+		}
+	}
+};
+
+function _addNearbyItems() {
+	var params = ["slot", "item_index", "helper_text", "itemname", "itemcount", "plusdata", "image_src"];
+	if (last_nearby_array.length != nearby_array.length) {return true}
+	for (i = 0; i < nearby_array.length; i++) {
+		for (i2 = 0; i2 < params.length; i2++) {
+			if (nearby_array[i][params[i2]] != last_nearby_array[i][params[i2]]) {
+				return true
+			}
+		}
+	}
+	return false
+}
 
 function close_inv_pressed() {
 	TriggerEvent('inventory:close_inv');

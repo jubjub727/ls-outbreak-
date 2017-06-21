@@ -137,19 +137,19 @@ browser:on("inventory:close_inv", function()
 	closeInv()
 end)
 
-browser:on("inventory:itemdropped", function()
-	Server:Trigger("inventory:itemdropped")
+browser:on("inventory:itemdropped", function(index)
+	Server:Trigger("inventory:dropItem", index)
 end)
-browser:on("inventory:itempickedup", function()
-	Server:Trigger("inventory:itempickedup")
+browser:on("inventory:itempickedup", function(index)
+	Server:Trigger("inventory:pickUpItem", index)
 end)
 
 function addItemInventory(slot, item_index, helper_text, type, amount, plusdata, image_src)
 	browser:execJS(string.format('addItemInventory(%s, %s, "%s", "%s", %s, "%s", "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
 end
 
-function addItemNearby(slot, item_index, helper_text, type, amount, plusdata, image_src)
-	browser:execJS(string.format('addItemNearby(%s, %s, "%s", "%s", %s, "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
+function addToNearbyArray(slot, item_index, helper_text, type, amount, plusdata, image_src)
+	browser:execJS(string.format('addToNearbyArray(%s, %s, "%s", "%s", %s, "%s", "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
 end
 
 function closeInv()
@@ -170,13 +170,14 @@ Thread:new(function()
 			local player = Native.PlayerPedId()
 			local x,y,z = Native.GetEntityCoords(player, 0)
 			local items = GetNearItems(x,y,z)
-			browser:execJS("clearNearbySlots();")	
+			browser:execJS("clearNearbyList();")
 			for k,v in pairs(items) do
 				print("Poop")
 				local item = GetItem(v)
-				addItemNearby(-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
+				addToNearbyArray(v-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
 			end
+			browser:execJS("addNearbyItems()");
 		end
-		Thread:Wait()
+		Thread:Wait(500)
 	end
 end)
