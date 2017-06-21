@@ -139,10 +139,30 @@ local function RemoveItem(index)
     table.remove(Items, index)
 end
 
+local function GetItemData(index)
+    return Items[index]
+end
+
+Player:On("requestItem", function(ply, index)
+    local itemData = GetItemData(index)
+    ply:triggerClient("receiveItem", itemData)
+end )
+
+Player:On("requestNearItems", function(ply, x, y, z)
+    local items = {}
+
+    for k,v in pairs() do
+        -- Add checks when Object:getPosition() is added
+        table.insert(items, k)
+    end
+
+    ply:triggerClient("receiveNearItems", items)
+end )
+
 Player:On("login:login", function(ply, username, password) 
 	if (Login(ply, username, password)) then
         spawnPlayer(ply)
-		Player:TriggerClient("closemenus")
+		ply:triggerClient("closemenus")
     else
         ply:kick()
     end
@@ -151,7 +171,7 @@ end )
 Player:On("login:register", function(ply, username, password, email) 
 	if (Register(ply, username, password, email)) then
         spawnPlayer(ply)
-		Player:TriggerClient("closemenus")
+		ply:riggerClient("closemenus")
     else
         ply:kick()
     end
