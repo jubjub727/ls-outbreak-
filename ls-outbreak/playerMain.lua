@@ -34,12 +34,12 @@ local function GetNearItems(x, y, z)
 	return itemList
 end
 
-local DropItem(index)
+local function DropItem(index)
 	local item = GetItem(index)
 	Server:Trigger("dropItem", item.name, item.desc, item.model, item.type)
 end
 
-local PickUpItem(index)
+local function PickUpItem(index)
 	Server:Trigger("pickUpItem", index)
 end
 
