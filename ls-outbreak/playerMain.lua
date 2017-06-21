@@ -104,8 +104,8 @@ local function GetNearItems(x, y, z)
 	return itemList
 end
 
-local function DropItem(name, desc, model, type)
-	Server:Trigger("dropItem", name, desc, model, type)
+local function DropItem(name, model, type)
+	Server:Trigger("dropItem", name, model, type)
 end
 
 local function PickUpItem(index)
@@ -136,8 +136,8 @@ browser:on("inventory:close_inv", function()
 	closeInv()
 end)
 
-browser:on("inventory:itemdropped", function(name, desc, model, type)
-	DropItem(name, desc, model, type)
+browser:on("inventory:itemdropped", function(name, model, type)
+	DropItem(name, model, type)
 end)
 browser:on("inventory:itempickedup", function(index)
 	PickUpItem(index)

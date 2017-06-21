@@ -147,9 +147,9 @@ Player:On("pickUpItem", function(ply, index)
 	RemoveItem(index)
 end )
 
-Player:On("dropItem", function(ply, name, desc, model, type)
+Player:On("dropItem", function(ply, name, model, type)
 	for k,v in pairs(ItemList) do
-        if (v[2] == name) and (v[3] == desc) and (v[4] == model) and (v[5] == type) then
+        if (v[2] == name) and (v[4] == model) and (v[5] == type) then
             local x,y,z = ply:getPosition()
             CreateItem(v[1], x, y, z)
         end
