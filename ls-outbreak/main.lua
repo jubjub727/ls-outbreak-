@@ -180,7 +180,7 @@ Player:On("login:login", function(ply, username, password)
         spawnPlayer(ply)
 		ply:triggerClient("closemenus")
     else
-        ply:kick()
+        ply:kick("Wrong Login")
     end
 end )
 
@@ -189,7 +189,7 @@ Player:On("login:register", function(ply, username, password, email)
         spawnPlayer(ply)
 		ply:riggerClient("closemenus")
     else
-        ply:kick()
+        ply:kick("That Username Already Exists")
     end
 end )
 
