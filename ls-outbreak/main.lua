@@ -145,11 +145,11 @@ local function GetItemData(index)
     return Items[index]
 end
 
-Player:On("dropItem" function(ply, index)
+Player:On("pickUpItem" function(ply, index)
     RemoveItem(index)
 end )
 
-Player:On("pickUpItem" function(ply, name, desc, model, type)
+Player:On("dropItem" function(ply, name, desc, model, type)
     for k,v in pairs(ItemList) do
         if v[2] == name and v[3] == desc and v[4] == model and v[5] == type then
             local x,y,z = ply:getPosition()
