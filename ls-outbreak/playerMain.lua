@@ -172,6 +172,7 @@ Thread:new(function()
 			local items = GetNearItems(x,y,z)
 			browser:execJS("clearNearbyList();")
 			for k,v in pairs(items) do
+				print("Poop")
 				local item = GetItem(v)
 				addToNearbyArray(v-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
 			end
