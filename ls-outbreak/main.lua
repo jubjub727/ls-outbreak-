@@ -141,10 +141,43 @@ local function RemoveItem(index)
     table.remove(Items, index)
 end
 
+local function GetItemData(index)
+    return Items[index]
+end
+
+Player:On("pickUpItem", function(ply, index)
+    RemoveItem(index)
+end )
+
+Player:On("dropItem", function(ply, name, desc, model, type)
+    for k,v in pairs(ItemList) do
+        if v[2] == name and v[3] == desc and v[4] == model and v[5] == type then
+            local x,y,z = ply:getPosition()
+            CreateItem(v, x, y, z)
+        end
+    end
+end )
+
+Player:On("requestItem", function(ply, index)
+    local itemData = GetItemData(index)
+    ply:triggerClient("receiveItem", itemData)
+end )
+
+Player:On("requestNearItems", function(ply, x, y, z)
+    local items = {}
+
+    for k,v in pairs(Items) do
+        -- Add checks when Object:getPosition() is added
+        table.insert(items, k)
+    end
+
+    ply:triggerClient("receiveNearItems", items)
+end )
+
 Player:On("login:login", function(ply, username, password) 
 	if (Login(ply, username, password)) then
         spawnPlayer(ply)
-		Player:TriggerClient("closemenus")
+		ply:triggerClient("closemenus")
     else
         ply:kick()
     end
@@ -153,7 +186,7 @@ end )
 Player:On("login:register", function(ply, username, password, email) 
 	if (Register(ply, username, password, email)) then
         spawnPlayer(ply)
-		Player:TriggerClient("closemenus")
+		ply:riggerClient("closemenus")
     else
         ply:kick()
     end
@@ -173,7 +206,7 @@ Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
         i = CreateItem(params[1], x, y, z-1)
-		    ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
+		--ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
     end
 end )
 
