@@ -143,12 +143,12 @@ browser:on("inventory:itempickedup", function(index)
 	PickUpItem(index)
 end)
 
-function addItemInventory(slot, item_index, helper_text, type, amount, plusdata, image_src)
-	browser:execJS(string.format('addItemInventory(%s, %s, "%s", "%s", %s, "%s", "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
+function addItemInventory(slot, item_index, helper_text, name, amount, plusdata, model, type)
+	browser:execJS(string.format('addItemInventory(%s, %s, "%s", "%s", %s, "%s", "%s", "%s");', slot, item_index, helper_text, name, amount, plusdata, model, type))
 end
 
-function addToNearbyArray(slot, item_index, helper_text, type, amount, plusdata, image_src)
-	browser:execJS(string.format('addToNearbyArray(%s, %s, "%s", "%s", %s, "%s", "%s");', slot, item_index, helper_text, type, amount, plusdata, image_src))
+function addToNearbyArray(slot, item_index, helper_text, name, amount, plusdata, model, type)
+	browser:execJS(string.format('addToNearbyArray(%s, %s, "%s", "%s", %s, "%s", "%s", "%s");', slot, item_index, helper_text, name, amount, plusdata, model, type))
 end
 
 function closeInv()
@@ -172,7 +172,7 @@ Thread:new(function()
 			browser:execJS("clearNearbyList();")
 			for k,v in pairs(items) do
 				local item = GetItem(v)
-				addToNearbyArray(v-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
+				addToNearbyArray(v-1, v, "__amount of __name", item.name, 1, item.extra, item.model, item.type)
 			end
 			browser:execJS("addNearbyItems()");
 		end
