@@ -1,3 +1,48 @@
+local itemdata = -1
+Server:On("receiveItem", function(ply, item)
+	itemdata = item
+end )
+
+local function GetItem(index)
+	Server:Trigger("requestItem", index)
+
+	while (itemdata == -1) do
+		Thread:Wait()
+	end
+
+	local item = itemdata
+	itemdata = -1
+
+	return item
+end
+
+local items = -1
+Server:On("receiveNearItems", function(ply, itemList)
+	items = itemList
+end )
+
+local function GetNearItems(x, y, z)
+	Server:Trigger("requestNearItems", x, y, z)
+
+	while (itemdata == -1) do
+		Thread:Wait()
+	end
+
+	local itemList = items
+	items = -1
+
+	return itemList
+end
+
+local function DropItem(index)
+	local item = GetItem(index)
+	Server:Trigger("dropItem", item.name, item.desc, item.model, item.type)
+end
+
+local function PickUpItem(index)
+	Server:Trigger("pickUpItem", index)
+end
+
 ----------------------------------
 --LOGIN BY JUBJUB and VAFFANCULO--
 ----------------------------------
