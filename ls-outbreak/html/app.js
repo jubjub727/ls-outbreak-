@@ -325,6 +325,17 @@ function addItemNearby(slot, item_index, helper_text, itemname, itemcount, plusd
 	});
 };
 
+function clearNearbySlots() {
+	var slots = $(".menu_item");
+	for (i = 0; i < slots.length; i++) {
+		/* If its a nearby item, delete it*/
+		if ($(slots[i].parentElement).hasClass("nearby_slot")) {
+			console.log(slots[i])
+			$(slots[i]).remove();
+		}
+	}
+};
+
 
 function close_inv_pressed() {
 	TriggerEvent('inventory:close_inv');

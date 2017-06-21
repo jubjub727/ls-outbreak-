@@ -51,7 +51,7 @@ local browser = UI:Browser("http://orange/resources/ls-outbreak/html/index.html"
 menu_loaded = false
 local loggingIn = true
 inv_active = false
-local inv_loaded = false
+inv_loaded = false
 
 browser:on("load", function()
 	print("[Login] load complete")
@@ -101,9 +101,56 @@ Thread:new(function()
 	end
 end)
 
----------------------------
---INVENTORY BY VAFFANCULO--
----------------------------
+--------------------------------------
+--INVENTORY BY JUBJUB and VAFFANCULO--
+--------------------------------------
+
+local itemdata = -1
+Server:On("receiveItem", function(ply, item)
+	itemdata = item
+end )
+
+local function GetItem(index)
+	Server:Trigger("requestItem", index)
+
+	while (itemdata == -1) do
+		Thread:Wait()
+	end
+
+	local item = itemdata
+	itemdata = -1
+
+	return item
+end
+
+local items = -1
+local ply_getnear = 0;
+Server:On("receiveNearItems", function(ply, itemList)
+	items = itemList
+	ply_getnear = ply
+end )
+
+local function GetNearItems(x, y, z)
+	Server:Trigger("requestNearItems", x, y, z)
+
+	while (itemdata == -1) do
+		Thread:Wait()
+	end
+
+	local itemList = items
+	items = -1
+
+	return itemList
+end
+
+local function DropItem(index)
+	local item = GetItem(index)
+	Server:Trigger("dropItem", item.name, item.desc, item.model, item.type)
+end
+
+local function PickUpItem(index)
+	Server:Trigger("pickUpItem", index)
+end
 
 Server:On("KeyPress", function(key)
 	if inv_loaded and key == 73 then
@@ -155,3 +202,19 @@ function showInv()
 	browser:execJS("openInv();")
 	UI:ShowCursor(true)
 end
+
+Thread:new(function()
+	while true do
+		if inv_loaded and inv_active then
+			local items = GetNearItems(x,y,z)
+			x,y,z = ply_getnear:getPosition()
+			--browser:execJS("clearNearbySlots();")	
+			for k,v in pairs(items) do
+				local item = GetItem(v)
+				print(item)
+				addItemNearby(-1, v, "__amount of __name", item.name, 1, item.extra, "http://orange/server/resources/ls-outbreak/html/img/ass_rifle.png")
+			end
+		end
+		Thread:Wait()
+	end
+end)
