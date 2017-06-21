@@ -145,7 +145,6 @@ local function GetItemData(index)
     return Items[index]
 end
 
-
 Player:On("pickUpItem", function(ply, index)
     RemoveItem(index)
 end )
