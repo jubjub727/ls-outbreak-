@@ -144,15 +144,12 @@ local function GetItemData(index)
 end
 
 Player:On("pickUpItem", function(ply, index)
-    print("Removing Item "..GetItemData(index).name.." - "..index)
 	RemoveItem(index)
 end )
 
 Player:On("dropItem", function(ply, name, desc, model, type)
-    print("Dropped "..name)
 	for k,v in pairs(ItemList) do
         if (v[2] == name) and (v[3] == desc) and (v[4] == model) and (v[5] == type) then
-            print("Creating Item "..v[1])
             local x,y,z = ply:getPosition()
             CreateItem(v[1], x, y, z)
         end
