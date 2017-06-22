@@ -185,3 +185,152 @@ color: #FFFFFF;
 .close_button:hover {
 	color:rgb(100,130,45);
 }
+
+  /*-------------------------------- */
+ /* MONEY, SHOP SYSTEM BY: VAFFANCULO */
+/*-------------------------------- */
+
+::-webkit-scrollbar {
+    width: 7.5px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.0)
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,1); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,0,0,0.4); 
+}
+
+
+#shop_menu {
+	width: 500px;
+	height: 350px;
+	background-color: rgba(0, 0, 0, 0.6);
+	border-color:black;
+	border-style:solid;
+	border-radius:2px;
+	border-width:7px;
+	border-top: 0px;
+}
+
+#shop_menu .top_border{
+	width: 500px;
+	margin-bottom:0;
+}
+
+.shop_section {
+	background-color:rgba(0, 0, 0, 0.5);
+}
+
+.shop_section .section_header {
+	height:25px;
+	display:flex;
+	align-items:center;
+}
+
+.shop_section .section_header .header_button {
+	width:15px;
+	height:15px;
+	margin-left: 1px;
+	font-size:150%;
+	display:block;
+	padding:4px;
+	color:rgb(111,156,50);
+	text-align: center;
+  vertical-align: middle;
+  line-height: 15px;       /* the same as your div height */
+}
+
+.shop_section .section_header .header_button:hover {
+  color:rgb(100,130,45);
+}
+
+.shop_section .section_header .header_title {
+  color:rgb(111,156,50);
+  font-family: 'Segoe UI', 'Segoe UI Symbol', Arial, sans-serif;
+}
+
+.shop_section .section_header .header_line {
+	background-color:rgb(111,156,50);
+	height:1px;
+  width:100%;
+	margin-left:3px;
+}
+
+.shop_item {
+	height:100px;
+	display:flex;
+	background-color:gray;
+	border-top:black 1px solid;
+}
+
+#shop_menu #menu_main {
+	height:89%;
+	width:100%;
+	overflow-y:auto;
+}
+
+.shop_item .item_img {
+	height:-moz-fit-content;
+	position: relative;
+}
+
+.shop_item .item_img_wrapper {
+	height:inherit;
+	width:300px;
+}
+
+.item_details {
+	width:-moz-available;
+}
+
+.item_details .item_header {
+	text-align: center;
+}
+
+
+  /*-------------------------------- */
+ /* HELPER ICONS BY: VAFFANCULO */
+/*-------------------------------- */
+
+#helper_icons {
+	width:210px;
+	height:100px;
+	float: right
+	display:flex;
+	position: fixed;
+	bottom:0px;
+	right:0px;
+	flex-wrap: wrap;
+	justify-content:space-between;
+	background-color: rgba(0,0,0, 0.7);
+	border: rgba(0,0,0, 0.7) 1px solid;
+	border-radius:4px;
+	padding:10px;
+}
+
+.helper_icon{
+  display:inline;
+}
+
+.helper_icon img:hover {
+	filter: brightness(0) invert(0.7);
+}
+
+.helper_icon img{
+	width:100px;
+	height:100px;
+	filter: brightness(0) invert(1);
+}

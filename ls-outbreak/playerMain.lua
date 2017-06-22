@@ -5,7 +5,6 @@
 local browser = UI:Browser("http://orange/resources/ls-outbreak/html/index.html")
 menu_loaded = false
 local loggingIn = true
-inv_active = false
 inv_loaded = false
 
 browser:on("load", function()
@@ -16,7 +15,6 @@ browser:on("load", function()
 	
 	print("[Inventory] load complete")
 	inv_loaded = true
-	browser:execJS("closeInv();")
 end)
 
 browser:on("login", function(username, password)
@@ -34,6 +32,7 @@ end)
 Server:On("closemenus", function()
 	browser:execJS("closeMenus();")
 	browser:execJS("stopMusic();")
+	browser:execJS("toggleIcons();")
 	UI:ShowCursor(false)
 	loggingIn = false
 	chatCanOpen = true
@@ -41,7 +40,7 @@ end)
 
 Thread:new(function()
 	while true do
-		if loggingIn or inv_active then
+		if loggingIn or invActive() then
 			Native.SetPauseMenuActive(false);
 
 			if Native.GetLastInputMethod(2) then
@@ -79,7 +78,6 @@ local function GetItem(index)
 	while (itemdata == -1) do
 		Thread:Wait()
 	end
-
 	local item = itemdata
 	itemdata = -1
 
@@ -90,6 +88,18 @@ local items = -1
 Server:On("receiveNearItems", function(itemList)
 	items = itemList
 end )
+
+browser:on("receiveInvActive", function(inv_active)
+	inv_active = inv_active
+end )
+
+browser:on("showMouse", function()
+	UI:ShowCursor(true)
+end)
+
+browser:on("hideMouse", function()
+	UI:ShowCursor(false)
+end)
 
 local function GetNearItems(x, y, z)
 	Server:Trigger("requestNearItems", x, y, z)
@@ -112,15 +122,21 @@ local function PickUpItem(index)
 	Server:Trigger("pickUpItem", index)
 end
 
+function toggleShop()
+	browser:execJS("toggleShop();")
+end
+
 Server:On("KeyPress", function(key)
 	if inv_loaded and key == 73 then
 		if not loggingIn then
-			if inv_active then
-				closeInv()
-			else
-				showInv()
-			end
+			toggleInv()
 		end
+	
+	elseif inv_loaded and key == 66 then
+		if not loggingIn then
+			toggleShop()
+		end
+		
 	end
 end)
 
@@ -133,7 +149,7 @@ Server:On("inventory:addnearbyitem", function(slot, item_index, helper_text, typ
 end)
 
 browser:on("inventory:close_inv", function()
-	closeInv()
+	toggleInv()
 end)
 
 browser:on("inventory:itemdropped", function(name, model, type)
@@ -151,21 +167,26 @@ function addToNearbyArray(slot, item_index, helper_text, name, amount, plusdata,
 	browser:execJS(string.format('addToNearbyArray(%s, %s, "%s", "%s", %s, "%s", "%s", "%s");', slot, item_index, helper_text, name, amount, plusdata, model, type))
 end
 
-function closeInv()
-	inv_active = false
-	browser:execJS("closeInv();")
-	UI:ShowCursor(false)
+function toggleInv() 
+	browser:execJS("toggleInv();")
 end
 
-function showInv()
-	inv_active = true
-	browser:execJS("openInv();")
-	UI:ShowCursor(true)
+local inv_active = -1;
+local function invActive() 
+	browser:execJS("requestInvActive();")
+	while (inv_active == -1) do
+		Thread:Wait()
+	end
+
+	local active = inv_active
+	inv_active = -1
+
+	return active 
 end
 
 Thread:new(function()
 	while true do
-		if inv_loaded and inv_active then
+		if inv_loaded and invActive() then
 			local player = Native.PlayerPedId()
 			local x,y,z = Native.GetEntityCoords(player, 0)
 			local items = GetNearItems(x,y,z)

@@ -3,7 +3,8 @@
 /*-------------------------------- */
 
 var main_theme = undefined;
-
+var open_things = {"inventory": false, "shop": false};
+var openable_things = ["inventory", "shop"]
 
 $(function() {
 	/* LOGIN BELOW*/
@@ -55,6 +56,14 @@ $(function() {
 		hoverClass: "drop_hover", 
 		drop: handleDrop
 		});
+	
+	/* MONEY, SHOP BELOW */
+	$("#shop_menu").draggable({handle: ".top_border"});
+	section_buttons = $(".header_button");
+	for (i = 0; i < section_buttons.length; i++) {
+		section_buttons[i].showing = true;
+		toggle_section(section_buttons[i]);
+	};
 });
 
 function onLoginFormSubmit(event) {
@@ -253,18 +262,19 @@ function getEmptySlots() {
 	return $(".menu_slot:not(:has(*))");
 };
 
-function openInv() {
-	$("#inventory_menu").show();
-};
-
-
-function closeInv() {
-	$("#inventory_menu").hide();
+function toggleInv() {
+	$("#inventory_menu").toggle();
+	open_things["inventory"] = !open_things["inventory"];
+	updateMouse();
 };
 
 function deleteItem(item) {
 	$(item).remove();
 };
+
+function requestInvActive() {
+	TriggerEvent("receiveInvActive", open_things["inventory"])
+}
 
 function updateHelperText(item) {
 	$(item)[0].children[0].title = item.helper_text.replace("%amount", item.itemcount).replace("%name", item.itemname).replace("%plusdata", item.data).replace("%ItemCount", item.itemcount + "x");
@@ -434,4 +444,74 @@ function getFirstEmptyNearbySlotIndex() {
 			return i
 		}
 	}
+};
+
+
+  /*-------------------------------- */
+ /* SHOP, MONEY SYSTEM BY: VAFFANCULO */
+/*-------------------------------- */
+
+var sections = [];
+
+function toggle_section(btn) {
+	section = btn.parentElement.parentElement.children[1];
+	/* The element is visible */
+	if (btn.showing == true) {
+		$(section).slideUp(); // Hide it with a slide motion.
+		btn.innerHTML = "+";
+	}
+	else {
+		$(section).slideDown(); // Show it with a slide motion.
+		btn.innerHTML = "-";
+	}
+	
+	btn.showing = !btn.showing;
+};
+
+function toggleShop() {
+	$("#shop_menu").toggle();
+	open_things["shop"] = !open_things["shop"];
+	updateMouse()
+}
+
+function updateMouse() {
+	for (i=0; i < openable_things.length; i++) {
+		if (open_things[openable_things[i]] == true) {
+			TriggerEvent("showMouse")
+			return
+		}
+		else {
+			TriggerEvent("hideMouse")
+		}
+	}
+}
+
+function getSectionById(id) {
+	return $(".section_%id".replace("%id", id))[0]
+}
+
+function addSectionToShop(title) {
+	$("#menu_main").append('<div class="shop_section section_%id"><div class="section_header"><div class="header_button" onclick="toggle_section(this);">+</div><div class="header_title">%title</div><div class="header_line"></div></div><div class="section_main"></div>'.replace("%title", title).replace("%id", sections.length));
+	sections.push(getSectionById(sections.length));
+}
+
+function addItemToSection(section_id, image_src, title, price, description) {
+	section = getSectionById(section_id);
+	/* There is a section with that id */
+	if (section != undefined){
+		$(section.children[1]).append('<div class="shop_item"><div class="item_img_wrapper"><img src="%image_src" class="item_img"></img></div><div class="item_details"><div class="item_header"><span>%title</span></div><div class="item_price">%item_price</div></div></div>'.replace("%image_src", image_src).replace("%title", title).replace("%item_price", price).replace("%description", description))
+		$(section.children[1]).hide();
+	}
+	/* There isn't a section with that id*/
+	else {
+		return
+	}
+}
+
+  /*-------------------------------- */
+ /* ICON BY: VAFFANCULO */
+/*-------------------------------- */
+
+function toggleIcons() {
+	$("#helper_icons").toggle();
 };
