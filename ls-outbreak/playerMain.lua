@@ -8,11 +8,11 @@ local loggingIn = true
 inv_loaded = false
 
 browser:on("load", function()
-	print("[Login] load complete")
+  print("[Login] load complete")
 	chatCanOpen = false
 	menu_loaded = true
 	UI:ShowCursor(true)
-	
+
 	print("[Inventory] load complete")
 	inv_loaded = true
 end)
@@ -25,7 +25,7 @@ end)
 
 browser:on("register", function(username, password, email)
 	local pass = sha(password)
-	
+
 	Server:Trigger("login:register", username, pass, email)
 end)
 
@@ -45,7 +45,7 @@ Thread:new(function()
 
 			if Native.GetLastInputMethod(2) then
 				Native.DisableControlAction(0, 0, false);
-			
+
 				for i = 1, 337 do
 					Native.DisableControlAction(0, i, false);
 				end
@@ -54,6 +54,30 @@ Thread:new(function()
 		Thread:Wait()
 	end
 end)
+
+--------------------------------------
+--SHOP BY JUBJUB and VAFFANCULO--
+--------------------------------------
+Server:On("addSectionToSectionArray", function(title)
+browser:execJS(string.format("addSectionToSectionArray('%s')", title))
+end)
+
+Server:On("addItemToSectionArray", function(section_id, image_src, title, price, description)
+browser:execJS(string.format("addItemToSectionArray('%s','%s','%s',%s,'%s')", section_id, image_src, title, price, description))
+end)
+
+local shop_active = -1;
+local function shopActive()
+	browser:execJS("requestShopActive();")
+	while (shop_active == -1) do
+		Thread:Wait()
+	end
+
+	local active = shop_active
+	shop_active = -1
+
+	return active
+end
 
 --------------------------------------
 --INVENTORY BY JUBJUB and VAFFANCULO--
@@ -131,12 +155,12 @@ Server:On("KeyPress", function(key)
 		if not loggingIn then
 			toggleInv()
 		end
-	
+
 	elseif inv_loaded and key == 66 then
 		if not loggingIn then
 			toggleShop()
 		end
-		
+
 	end
 end)
 
@@ -167,12 +191,12 @@ function addToNearbyArray(slot, item_index, helper_text, name, amount, plusdata,
 	browser:execJS(string.format('addToNearbyArray(%s, %s, "%s", "%s", %s, "%s", "%s", "%s");', slot, item_index, helper_text, name, amount, plusdata, model, type))
 end
 
-function toggleInv() 
+function toggleInv()
 	browser:execJS("toggleInv();")
 end
 
 local inv_active = -1;
-local function invActive() 
+local function invActive()
 	browser:execJS("requestInvActive();")
 	while (inv_active == -1) do
 		Thread:Wait()
@@ -181,7 +205,7 @@ local function invActive()
 	local active = inv_active
 	inv_active = -1
 
-	return active 
+	return active
 end
 
 Thread:new(function()

@@ -6,7 +6,7 @@
 		<title>Login System By Vaffanculo</title>
 		<link rel="stylesheet" href="style.css" />
 		<link rel="stylesheet" href="jquery-ui.min.css" />
-		
+
 		<script src="jquery.js"></script>
 		<script src="jquery-ui.min.js"></script>
 		<script src="app.js"></script>
@@ -26,7 +26,7 @@
 				<div class="menu_footer"><a onclick="showRegisterMenu()">Create an account</a><a onclick="showForgotMenu()">Forgot Password</a></div>
 				</div>
 			</div>
-			
+
 			<div id="register_menu" class="menu" style="display:none;">
 				<div class="menu-header">Register Page <span class="speaker">&#128266;</span><span style="display:none;" class="speaker">&#128263;</span></div>
 				<div class="main_register">
@@ -40,7 +40,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- INVENTORY SYSTEM BELOW -->
 		<div id="inventory_menu" style="display:none;">
 			<div class="top_border">
@@ -48,16 +48,17 @@
 				<div class="close_button" onclick="close_inv_pressed()"><span class="close_text">Close</span><span class="cross">&times;</span></div>
 			</div>
 			<div id="grids">
-				<div id="grid_wrapper"> <div id="nearby_text">Nearby:</div>
-				<div id="firstgrid" class="inventory_grid">
-				</div>
+				<div id="grid_wrapper">
+				<div id="nearby_text">Nearby:</div>
+				<div id="firstgrid" class="inventory_grid"></div>
+				<div id="money_wrapper"> You have: <div id="money_amount">100$</div></div>
 				</div>
 				<div id="secondgrid" class="inventory_grid"></div>
 			</div>
 		</div>
-		
+
 		<!-- MONEY, SHOP SYSTEM BELOW -->
-		<div id="shop_menu" style="display:none;">
+		<div id="shop_menu" style="display:">
 			<div class="top_border">
 				<div class="menu_title">Shop</div>
 				<div class="close_button" onclick="toggleInv()"><span class="close_text">Close</span><span class="cross">&times;</span></div>
@@ -74,7 +75,14 @@
 							<div class="item_img_wrapper"><img src="http://prod.cloud.rockstargames.com/ugc/gta5photo/3439/2mEuJt-Bwkmi42kfDaq0xg/0_0.jpg" class="item_img"></img></div>
 							<div class="item_details">
 								<div class="item_header"><span>Zentorno</span></div>
-								<div class="item_price">3600$</div>
+								<div class="item_columns">
+									<div class="item_details_left">
+										<div class="item_price">3600$</div>
+									</div>
+									<div class="item_details_right">
+										<button class="buy_button">Buy Now</button>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="shop_item">
@@ -103,9 +111,9 @@
 			</div>
 		</div>
 		<!-- HELPER ICONS -->
-		<div id="helper_icons" style="display:none;">
-			<div class="helper_icon"><img src="http://www.free-icons-download.net/images/shop-icon-23328.png"></img></div>
-			<div class="helper_icon"><img src="http://www.freeiconspng.com/uploads/backpack-icon-2.png"></img></div>
+		<div id="helper_icons" style="">
+			<div onclick="toggleShop();" class="helper_icon"><img src="http://www.free-icons-download.net/images/shop-icon-23328.png"></img></div>
+			<div onclick="toggleInv();" class="helper_icon"><img src="http://www.freeiconspng.com/uploads/backpack-icon-2.png"></img></div>
 		<div>
 	</body>
 

@@ -9,10 +9,10 @@ var openable_things = ["inventory", "shop"]
 $(function() {
 	/* LOGIN BELOW*/
 	$("#login_menu").show("bounce", 850);
-	
+
 	$("#login_form").submit(function(event) {onLoginFormSubmit(event)});
 	$("#register_form").submit(function(event) {onRegisterFormSubmit(event)});
-	
+
 	login_inputs = document.getElementById("login_form").getElementsByTagName("input");
 	register_inputs = document.getElementById("register_form").getElementsByTagName("input");
 	for (i=0; i < login_inputs.length; i++) {
@@ -23,13 +23,13 @@ $(function() {
 		register_inputs[i].oninput = onRegisterInputChange
 		 if (register_inputs[i].type == "submit") {register_inputs[i].disabled = true;}
 	}
-	
+
 	main_theme = new Audio("sounds/main.ogg");
-	
+
 	main_theme.volume = 0.06;
 	main_theme.loop = true;
 	main_theme.play();
-	
+
 	$(".speaker").click(function() {
 		$(".speaker").toggle();
 		if (main_theme.paused) {
@@ -39,24 +39,24 @@ $(function() {
 			main_theme.pause();
 		}
 	});
-	
+
 	/* INVENTORY BELOW*/
 	$("#inventory_menu").draggable({handle: ".top_border"});
-	
-	for (i = 0; i < 12; i++) { 
+
+	for (i = 0; i < 12; i++) {
 		$("#firstgrid").append("<div class='menu_slot nearby_slot' ></div>");
 	}
-	
-	for (i = 0; i < 24; i++) { 
+
+	for (i = 0; i < 24; i++) {
 		$("#secondgrid").append("<div class='menu_slot inventory_slot' ></div>");
 	}
-	
+
 	$(".menu_slot").droppable({
-		accept: ".item_img", 
-		hoverClass: "drop_hover", 
+		accept: ".item_img",
+		hoverClass: "drop_hover",
 		drop: handleDrop
 		});
-	
+
 	/* MONEY, SHOP BELOW */
 	$("#shop_menu").draggable({handle: ".top_border"});
 	section_buttons = $(".header_button");
@@ -127,13 +127,13 @@ document.onkeydown = function(e) {
 	if (e.keyCode === 17) {
         ctrlPressed = true;
     }
-	
+
 }
 document.onkeyup = function(e) {
 	if (e.keyCode === 17) {
         ctrlPressed = false;
     }
-	
+
 }
 
 function areSame(first_element, second_element) {
@@ -146,7 +146,7 @@ function isSlotNearby(slot) {
 
 function handleDrop(event, ui) {
 	if ($(event.target).hasClass(".nearby_slot") && $(ui.draggable[0].parentElement).hasClass(".nearby_slot")) {event.preventDefault(); return;}
-	
+
 	/* CTRL WAS NOT PRESSED */
 	if (ctrlPressed != true) {
 		/* There was an item in that slot */
@@ -170,7 +170,7 @@ function handleDrop(event, ui) {
 		else if  (!isSlotNearby(event.target) && wasNearby != isSlotNearby(event.target)) {
 			TriggerEvent("inventory:itempickedup", ui.draggable[0].parentElement.item_index)
 		}
-			
+
 		updateHelperText(event.target.firstChild) // Update helper text for the moved item
 	}
 	/* CTRL WAS PRESSED */
@@ -178,10 +178,10 @@ function handleDrop(event, ui) {
 		event.preventDefault()
 		/* There was no item in that slot*/
 		if (event.target.children.length == 0) {
-			
+
 			/* Total number of items in the starting item*/
 			var starting_item = ui.draggable[0].parentElement;
-			var was_starting_slot_nearby = isSlotNearby(starting_item.parentElement); 
+			var was_starting_slot_nearby = isSlotNearby(starting_item.parentElement);
 			var total = starting_item.itemcount;
 			var ending_slot = event.target;
 			/* Starting item */
@@ -189,24 +189,24 @@ function handleDrop(event, ui) {
 			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
 			total = total - starting_item.itemcount; // total = remainder
 			updateHelperText(starting_item); // Update starting item's helper_text
-			
+
 			/* Ending item */
 			$(ending_slot).append($(starting_item).clone()); //Clone so the original won't disappear
 			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
 			var ending_item = ending_slot.firstChild;
 			var ending_img = ending_item.firstChild;
 			ending_item.helper_text = starting_item.helper_text;
-			
+
 			if (total <= 0) {ending_item.itemcount = 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
 			else {ending_item.itemcount = total} // Else the ending item's itemcount becomes the remainder
 			ending_item.children[1].innerHTML = ending_item.itemcount + "x"; // Display new itemcount
-			
+
 			/* Reset position of the ending item/image */
 			ending_img.style.top = 0; // Reset top
 			ending_img.style.left = 0; // Reset left
-			
+
 			updateHelperText(ending_item); // Update ending item's helper_text
-			
+
 			/* Check if moved from inv to nearby or from nearby to inv*/
 			if (isSlotNearby(ending_item.parentElement) && !was_starting_slot_nearby) {
 				TriggerEvent("inventory:itemdropped", ui.draggable[0].parentElement.itemname, ui.draggable[0].parentElement.model, ui.draggable[0].parentElement.type)
@@ -214,48 +214,48 @@ function handleDrop(event, ui) {
 			else if (!isSlotNearby(ending_item.parentElement) && was_starting_slot_nearby) {
 				TriggerEvent("inventory:itempickedup", ui.draggable[0].parentElement.item_index)
 			}
-			
-			
+
+
 		}
 		/* There is an item in that slot*/
 		else {
 			if (areSame(event.target.firstChild, ui.draggable[0].parentElement)) {return} // If the two elements are the same, then don't do anything.
-			
+
 			var starting_item = ui.draggable[0].parentElement; // The item the user started dragging
 			var was_starting_slot_nearby = isSlotNearby(starting_item.parentElement);
 			var ending_item = event.target.firstChild; // The dropped item
-			
+
 			var total = starting_item.itemcount; // Total number of items
 			starting_item.itemcount = Math.ceil(starting_item.itemcount / 2);
 			starting_item.children[1].innerHTML = starting_item.itemcount + "x"; // Display the new itemcount
 			updateHelperText(starting_item); // Update starting item's helper text
 			total -= starting_item.itemcount; // The remainder
-			
+
 			if (total <= 0) {deleteItem(starting_item)} // If the total is less or equal to 0 then delete the starting_item
-			
+
 			/* Add the remainder to the second item*/
 			if (total <= 0) {ending_item.itemcount += 1} // If the remainder is 0 (the starting item's itemcount was 1) then add +1 to the ending item's itemcount
 			else {ending_item.itemcount += total} // Else add the remainder to the ending_item's itemcount
 			ending_item.children[1].innerHTML = ending_item.itemcount + "x"; // Display the new itemcount for the second item
-			
+
 			ending_item.helper_text = starting_item.helper_text;
 			updateHelperText(ending_item); // Update ending item's helper text
-			
+
 			if (isSlotNearby(ending_item.parentElement) && !was_starting_slot_nearby) {
 				TriggerEvent("inventory:itemdropped", ui.draggable[0].parentElement.itemname, ui.draggable[0].parentElement.model, ui.draggable[0].parentElement.type)
 			}
 			else if (!isSlotNearby(ending_item.parentElement) && was_starting_slot_nearby) {
 				TriggerEvent("inventory:itempickedup", ui.draggable[0].parentElement.item_index)
 			}
-			
+
 		}
 		/* Update tooltips*/
 		$("body").remove("ui-helper-hidden-accessible"); // Remove all existing tooltips
 		$(".menu_slot").tooltip(); // Add tooltip to every slot
-		
+
 		updateDraggables(); // Update draggables
 	}
-	
+
 };
 
 function getEmptySlots() {
@@ -281,8 +281,8 @@ function updateHelperText(item) {
 	$(".ui-helper-hidden-accessible").remove(); // Remove all tooltip helpers
 	$(".ui-tooltip").remove(); // Remove active tooltips
 	$(".menu_slot").tooltip(); // Reactivate tooltips
-	
-	
+
+
 };
 
 function  getImageSourceFromModel(model) {
@@ -299,7 +299,7 @@ function addItemInventory(slot, item_index, helper_text, itemname, itemcount, pl
 			return
 		}
 	}
-	
+
 	var image_src = getImageSourceFromModel(model);
 	$(".inventory_slot")[slot].innerHTML = "<div class='menu_item'><img src='%image_src' title='%ItemName' class='item_img'></img> <div class='item_count'>%ItemCount</div> </div>".replace("%ItemName", helper_text.replace("__amount", itemcount).replace("__name", itemname).replace("%plusdata", plusdata)).replace("%ItemCount", itemcount + "x").replace("%image_src", image_src);
 	$($(".inventory_slot")[slot]).tooltip();
@@ -452,6 +452,23 @@ function getFirstEmptyNearbySlotIndex() {
 /*-------------------------------- */
 
 var sections = [];
+var money = 0;
+
+function toggleButtonsInsideSection(section, status) {
+	var buttons_inside_section = $(section)[0].getElementsByTagName("button");
+	for (i=0; i < buttons_inside_section.length; i++) {
+		$(buttons_inside_section[i].parentElement).show();
+		$(buttons_inside_section[i].parentElement).removeClass("slidein"); // Remove class if it has it
+		$(buttons_inside_section[i].parentElement).addClass("slidein"); // Add class in another words, start animating
+	}
+}
+
+function hideButtonsInsideSection(section) {
+	var buttons_inside_section = $(section)[0].getElementsByTagName("button");
+	for (i=0; i < buttons_inside_section.length; i++) {
+		$(buttons_inside_section[i].parentElement).hide(); // Hide the button's parent
+	}
+}
 
 function toggle_section(btn) {
 	section = btn.parentElement.parentElement.children[1];
@@ -459,12 +476,14 @@ function toggle_section(btn) {
 	if (btn.showing == true) {
 		$(section).slideUp(); // Hide it with a slide motion.
 		btn.innerHTML = "+";
+		hideButtonsInsideSection(section);
 	}
 	else {
 		$(section).slideDown(); // Show it with a slide motion.
 		btn.innerHTML = "-";
+		toggleButtonsInsideSection(section);
 	}
-	
+
 	btn.showing = !btn.showing;
 };
 
@@ -490,22 +509,103 @@ function getSectionById(id) {
 	return $(".section_%id".replace("%id", id))[0]
 }
 
+var shop_item_parameters = ["image_src", "title", "price", "description"]
+var shop_sections = [];
+var new_shop_sections = [];
+
 function addSectionToShop(title) {
-	$("#menu_main").append('<div class="shop_section section_%id"><div class="section_header"><div class="header_button" onclick="toggle_section(this);">+</div><div class="header_title">%title</div><div class="header_line"></div></div><div class="section_main"></div>'.replace("%title", title).replace("%id", sections.length));
-	sections.push(getSectionById(sections.length));
+	$("#menu_main").append('<div class="shop_section section_%id"><div class="section_header"><div class="header_button" onclick="toggle_section(this);">+</div><div class="header_title">%title</div><div class="header_line"></div></div><div class="section_main"></div>'.replace("%title", title).replace("%id", shop_sections.length));
+	shop_sections.push(createShopSection(title, getSectionById(shop_sections.length)))
 }
 
 function addItemToSection(section_id, image_src, title, price, description) {
 	section = getSectionById(section_id);
 	/* There is a section with that id */
 	if (section != undefined){
-		$(section.children[1]).append('<div class="shop_item"><div class="item_img_wrapper"><img src="%image_src" class="item_img"></img></div><div class="item_details"><div class="item_header"><span>%title</span></div><div class="item_price">%item_price</div></div></div>'.replace("%image_src", image_src).replace("%title", title).replace("%item_price", price).replace("%description", description))
+		$(section.children[1]).append('<div class="shop_item"><div class="item_img_wrapper"><img src="%image_src" class="item_img"></img></div><div class="item_details"><div class="item_header"><span>%title</span></div><div class="item_columns"><div class="item_details_left"><div class="item_price">%item_price</div></div><div class="item_details_right"><button class="buy_button">Buy Now</button></div></div></div></div>'.replace("%image_src", image_src).replace("%title", title).replace("%item_price", price).replace("%description", description))
 		$(section.children[1]).hide();
 	}
 	/* There isn't a section with that id*/
 	else {
 		return
 	}
+}
+
+function getSectionItemsById(id) {
+	/* Id is invalid */
+	if (id > shop_sections.length + 1) {return;}
+	return shop_sections[id]["items"];
+}
+
+function areSenctionsChanged() {
+/* Function returns true if the shop needs a restart.*/
+	if (new_shop_sections.length != shop_sections.length) {return true}
+	for (i=0; i < new_shop_sections.length; i++) {
+		/* Check every parameter */
+		for (i1=0; i1 < shop_item_parameters.length; i1++) {
+			if (new_shop_sections[i][shop_item_parameters[i1]] != shop_sections[i][shop_item_parameters[i1]]) {
+				return true;
+			}
+		}
+	}
+	/* The shop does not need a restart */
+	return false;
+}
+
+function addItemsToSection() {
+	/* The shop didn't changed so don't do anything */
+	if (!areSenctionsChanged()) {return}
+	shop_sections = [];
+	clearShop()
+	for (i=0; i < new_shop_sections.length; i++) {
+		 addSectionToShop(new_shop_sections[i]["title"])
+		 var items = new_shop_sections[i]["items"];
+		 for (i1=0; i1 < items.length; i1++) {
+			 for (i2=0; i2 < shop_item_parameters.length; i2++) {
+			 	shop_sections[i]["items"].push(new_shop_sections[i]["items"][i1][shop_item_parameters[i2]]);
+		 	 }
+			 addItemToSection(i, items[i1]["image_src"], items[i1]["title"], items[i1]["price"], items[i1]["description"])
+		 }
+	}
+	new_shop_sections = [];
+}
+
+function clearShop() {
+	$(".shop_section").remove();
+}
+
+function addItemToSectionArray(section_id, image_src, title, price, description) {
+	new_shop_sections[section_id]["items"].push(createShopItem(image_src, title, price, description));
+}
+
+function addSectionToSectionArray(title) {
+	new_shop_sections.push(createShopSection(title));
+}
+
+function createShopItem(image_src, title, price, description) {
+	var item = {};
+	item["image_src"] = image_src;
+	item["title"] = title;
+	item["price"] = price;
+	item["description"] = description;
+	return item;
+}
+
+function createShopSection(title, elem) {
+	var section = {};
+	section["title"] = title;
+	section["items"] = [];
+	section["element"] = elem;
+	return section;
+}
+
+function setMoney(new_money) {
+	money = new_money;
+	$("#money_amount")[0].innerHTML = " " + money + "$";
+}
+
+function requestShopActive() {
+	TriggerEvent("receiveShopActive", open_things["shop"])
 }
 
   /*-------------------------------- */
