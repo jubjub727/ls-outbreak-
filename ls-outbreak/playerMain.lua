@@ -17,6 +17,18 @@ browser:on("load", function()
 	inv_loaded = true
 end)
 
+local inv_active = -1;
+function invActive()
+	browser:execJS("requestInvActive();")
+	while (inv_active == -1) do
+		Thread:Wait()
+	end
+
+	local active = inv_active
+	inv_active = -1
+	return active
+end
+
 browser:on("login", function(username, password)
 	local pass = sha(password)
 
@@ -67,7 +79,7 @@ browser:execJS(string.format("addItemToSectionArray('%s','%s','%s',%s,'%s')", se
 end)
 
 local shop_active = -1;
-local function shopActive()
+function shopActive()
 	browser:execJS("requestShopActive();")
 	while (shop_active == -1) do
 		Thread:Wait()
@@ -77,6 +89,10 @@ local function shopActive()
 	shop_active = -1
 
 	return active
+end
+
+local function addItemsToSection()
+  browser:execJS("addItemsToSection();")
 end
 
 --------------------------------------
@@ -195,25 +211,13 @@ function toggleInv()
 	browser:execJS("toggleInv();")
 end
 
-local inv_active = -1;
-local function invActive()
-	browser:execJS("requestInvActive();")
-	while (inv_active == -1) do
-		Thread:Wait()
-	end
-
-	local active = inv_active
-	inv_active = -1
-
-	return active
-end
-
 Thread:new(function()
 	while true do
-		if inv_loaded and invActive() then
+    print("a")
+    if inv_loaded and invActive() then
 			local player = Native.PlayerPedId()
-			local x,y,z = Native.GetEntityCoords(player, 0)
 			local items = GetNearItems(x,y,z)
+      --local shop_items = GetNearShopItems(x,y,z)
 			browser:execJS("clearNearbyList();")
 			for k,v in pairs(items) do
 				local item = GetItem(v)
@@ -221,6 +225,21 @@ Thread:new(function()
 			end
 			browser:execJS("addNearbyItems()");
 		end
-		Thread:Wait(500)
-	end
+    if menu_loaded and shopActive() then
+      local x,y,z = Native.GetEntityCoords(player, 0)
+      local shop_items = GetShopItems(x,y,z)
+      --local shop_sections = GetShopSections(x,y,z)
+      shop_sections = {"Section Title 1", "Section Title 2"}
+      for k,v in pairs(shop_sections) do
+        addSectionToSectionArray(v)
+        --add items
+        --Parameters: section_id, image_src, title, price, description
+        addItemToSectionArray(k-1, "http://www.st2299.com/data/wallpapers/230/wp-image-59152519.png", "Title 1", "1000", "This is cool")
+        addItemToSectionArray(k-1, "http://www.st2299.com/data/wallpapers/230/wp-image-59152519.png", "Title 2", "2500", "This is cool")
+        --Update everything
+        addItemsToSection()
+      end
+    end
+	Thread:Wait(500)
+  end
 end)
