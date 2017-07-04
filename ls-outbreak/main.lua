@@ -99,7 +99,7 @@ local function Login(ply, username, password)
 	print("User "..username.." Logging In")
     local result = conn:query("SELECT uid, username, password FROM users WHERE username = '%s' AND password = '%s';", username, password)
 
-	if not (result[1] == nil) then	
+	if not (result[1] == nil) then
         table.insert(Players, {result[1].uid, ply})
         return true
     else
@@ -117,7 +117,7 @@ local function CreateItem(item, x, y, z)
             local desc = ItemList[k][3]
             local type = ItemList[k][5]
             local extra = ItemList[k][6]
-			
+
             local newItem = {}
             newItem.name = name
             newItem.desc = desc
@@ -175,7 +175,7 @@ Player:On("requestNearItems", function(ply, x, y, z)
     ply:triggerClient("receiveNearItems", items)
 end )
 
-Player:On("login:login", function(ply, username, password) 
+Player:On("login:login", function(ply, username, password)
 	if (Login(ply, username, password)) then
         spawnPlayer(ply)
 		ply:triggerClient("closemenus")
@@ -184,7 +184,7 @@ Player:On("login:login", function(ply, username, password)
     end
 end )
 
-Player:On("login:register", function(ply, username, password, email) 
+Player:On("login:register", function(ply, username, password, email)
 	if (Register(ply, username, password, email)) then
         spawnPlayer(ply)
 		ply:riggerClient("closemenus")
@@ -207,7 +207,6 @@ Player:On("command", function(ply, cmd, params)
     local x,y,z = ply:getPosition()
     if cmd == "object" then
         local i = CreateItem(params[1], x, y, z-1)
-		--ply:triggerClient("inventory:addinventoryitem", -1, i, "__amount of __name", Items[i].name, 1, Items[i].extra, "http://orange/server/resources/ls-outbreak/html/img/car_key.png")
     end
     if cmd == "delete" then
         RemoveItem(1)
@@ -215,7 +214,7 @@ Player:On("command", function(ply, cmd, params)
 end )
 
 local function Setup() -- Called before anything for things that need to be setPosition
-    
+
     loadMySQL() -- Initialise any MySQL related features
 
 
